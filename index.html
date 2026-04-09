@@ -1,0 +1,2154 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cashnarok™</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #1a202c;
+      --muted: #718096;
+      --green: #38a169;
+      --green-light: #f0fff4;
+      --red: #e53e3e;
+      --red-light: #fff5f5;
+      --blue: #3182ce;
+      --gray-light: #f7fafc;
+      --radius: 10px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --input-bg: #ffffff;
+      --header-grad: linear-gradient(135deg, #1a365d 0%, #2a4a7f 100%);
+      --modal-bg: #ffffff;
+      --mal-notice-bg: #fffbeb;
+      --mal-notice-border: #f6e05e;
+      --mal-notice-color: #744210;
+    }
+
+    body.dark {
+      --bg: #0f1117;
+      --card: #1a1d27;
+      --border: #2a2e42;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --green: #68d391;
+      --green-light: #0d2218;
+      --red: #fc8181;
+      --red-light: #2d1515;
+      --blue: #63b3ed;
+      --gray-light: #14161f;
+      --shadow: 0 1px 3px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.4);
+      --input-bg: #1e2132;
+      --header-grad: linear-gradient(135deg, #0d1b2e 0%, #162040 100%);
+      --modal-bg: #1a1d27;
+      --mal-notice-bg: #2a2410;
+      --mal-notice-border: #6b5a10;
+      --mal-notice-color: #f6e05e;
+    }
+
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+
+    /* ── Header ── */
+    header { background: var(--header-grad); color: white; padding: 20px 32px 0; overflow: visible; position: relative; z-index: 100; }
+    .header-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 16px; }
+    header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+    header p { font-size: 13px; opacity: 0.75; margin-top: 2px; }
+
+    /* ── Month navigator ── */
+    .month-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0 12px; position: relative; }
+    .mal-btn { flex-shrink: 0; background: transparent; border: 1px solid rgba(255,255,255,0.25); border-bottom: 3px solid transparent; color: rgba(255,255,255,0.55); padding: 7px 14px; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 12px; font-style: italic; font-weight: 500; transition: all 0.15s; white-space: nowrap; }
+    .mal-btn:hover { color: white; background: rgba(255,255,255,0.1); }
+    .mal-btn.active { color: white; font-weight: 700; background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.4); border-bottom-color: white; }
+    .month-picker-center { display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center; }
+    .nav-arrow { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; line-height: 1; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
+    .nav-arrow:hover { background: rgba(255,255,255,0.15); color: white; }
+    .nav-arrow:disabled { opacity: 0.25; cursor: default; }
+    .month-picker-wrap { position: relative; }
+    .month-current-btn { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 7px 16px; border-radius: 22px; cursor: pointer; font-size: 14px; font-weight: 700; transition: background 0.15s; white-space: nowrap; min-width: 160px; justify-content: center; }
+    .month-current-btn:hover { background: rgba(255,255,255,0.22); }
+    .month-current-btn svg { flex-shrink: 0; transition: transform 0.2s; }
+    .month-current-btn.open svg { transform: rotate(180deg); }
+    .month-dropdown-panel { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: #1e3a5f; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 500; min-width: 220px; max-height: 380px; overflow-y: auto; padding: 8px 0; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent; }
+    .month-dropdown-panel.hidden { display: none; }
+    .month-year-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.4); padding: 10px 16px 4px; }
+    .month-item { display: flex; align-items: center; justify-content: space-between; width: 100%; background: transparent; border: none; color: rgba(255,255,255,0.75); padding: 9px 12px 9px 20px; cursor: pointer; font-size: 13px; text-align: left; transition: background 0.1s; gap: 8px; }
+    .month-item:hover { background: rgba(255,255,255,0.1); color: white; }
+    .month-item.active { color: white; font-weight: 700; background: rgba(255,255,255,0.12); }
+    .month-item.active::before { content: '▸'; font-size: 10px; margin-left: -12px; margin-right: 4px; opacity: 0.8; }
+    .month-item-del { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: transparent; border: 1px solid transparent; color: rgba(255,255,255,0.3); font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; line-height: 1; }
+    .month-item-del:hover { background: rgba(220,38,38,0.4); border-color: rgba(220,38,38,0.6); color: white; }
+    .btn-new-month { flex-shrink: 0; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 7px 14px 7px 10px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 5px; transition: background 0.15s; white-space: nowrap; }
+    .btn-new-month:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── Main ── */
+    .main { max-width: 1140px; margin: 0 auto; padding: 28px 20px; }
+
+    /* ── Summary cards ── */
+    .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+    .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; border: 1px solid var(--border); }
+    .card-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 8px; }
+    .card-value { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+    .card-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .card.income .card-value { color: var(--green); }
+    .card.expenses .card-value { color: var(--red); }
+    .card.balance .card-value { color: var(--blue); }
+    .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-top: 10px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 3px; background: var(--blue); transition: width 0.5s ease; }
+
+    /* ── MAL notice ── */
+    .mal-notice { background: var(--mal-notice-bg); border: 1px solid var(--mal-notice-border); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--mal-notice-color); }
+    .mal-notice strong { font-weight: 700; }
+    .mal-notice .btn-create-from-mal { margin-left: auto; background: #d69e2e; color: white; border: none; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+    .mal-notice .btn-create-from-mal:hover { opacity: 0.88; }
+
+    /* ── Controls ── */
+    .controls { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .filter-label { font-size: 13px; color: var(--muted); font-weight: 500; }
+    .filter-btn { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.15s; color: var(--text); }
+    .filter-btn.active { background: var(--blue); border-color: var(--blue); color: white; }
+
+    /* ── Sections ── */
+    .section { margin-bottom: 28px; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .section-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .section-title::before { content: ''; display: inline-block; width: 3px; height: 16px; border-radius: 2px; }
+    .section.income-section .section-title::before { background: var(--green); }
+    .section.expense-section .section-title::before { background: var(--red); }
+    .section.balance-section .section-title::before { background: var(--blue); }
+    .btn-add { background: var(--blue); color: white; border: none; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: opacity 0.15s; }
+    .btn-add:hover { opacity: 0.88; }
+    .btn-add svg { width: 14px; height: 14px; }
+
+    /* ── Tables ── */
+    .table-wrap { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th { background: var(--gray-light); padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+    thead th.num { text-align: right; }
+    thead th.actions-col { width: 72px; }
+    tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #fafbfc; }
+    tbody tr.total-row td { background: var(--gray-light); font-weight: 700; border-top: 2px solid var(--border); border-bottom: none; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .pos { color: var(--green); }
+    .neg { color: var(--red); }
+    .zero { color: var(--muted); }
+
+    /* ── Badges ── */
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .badge-paid { background: var(--green-light); color: var(--green); }
+    .badge-unpaid { background: var(--red-light); color: var(--red); }
+    .badge-na { background: var(--gray-light); color: var(--muted); }
+    .badge-fast { background: #e9d8fd; color: #6b46c1; }
+    .badge-variabel { background: #feebc8; color: #c05621; }
+    .badge-stipulert { background: #bee3f8; color: #2c5282; }
+    .badge-midlertidig { background: #fef3c7; color: #92400e; }
+    .note { color: var(--muted); font-size: 12px; font-style: italic; }
+
+    /* ── Row actions ── */
+    .row-actions { display: flex; gap: 4px; justify-content: flex-end; opacity: 0; transition: opacity 0.15s; }
+    tbody tr:hover .row-actions { opacity: 1; }
+    .btn-icon { background: none; border: 1px solid var(--border); border-radius: 5px; padding: 3px 6px; cursor: pointer; font-size: 12px; line-height: 1; color: var(--muted); transition: all 0.12s; }
+    .btn-icon:hover { background: var(--blue); border-color: var(--blue); color: white; }
+    .btn-icon.del:hover { background: var(--red); border-color: var(--red); color: white; }
+
+    /* ── Inline actual editing ── */
+    .actual-cell { cursor: text; position: relative; min-width: 110px; }
+    .actual-cell:not(.editing):hover { background: #eef5ff !important; }
+    .actual-placeholder { color: var(--muted); font-style: italic; font-size: 12px; }
+    .inline-input { width: 100%; border: none; border-bottom: 2px solid var(--blue); background: transparent; text-align: right; font-size: 14px; font-family: inherit; color: var(--text); outline: none; padding: 1px 0; font-variant-numeric: tabular-nums; }
+
+    /* ── Status toggle ── */
+    .status-cell.toggleable { cursor: pointer; user-select: none; }
+    .status-cell.toggleable:hover .badge { filter: brightness(0.9); }
+    .status-cell.toggleable .badge::after { content: ' ↕'; font-size: 9px; opacity: 0.5; }
+
+    /* ── Language toggle ── */
+    .header-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .header-sep { width: 1px; height: 22px; background: rgba(255,255,255,0.2); flex-shrink: 0; }
+    .lang-select {
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+      color: white; padding: 6px 10px; border-radius: 8px; cursor: pointer;
+      font-size: 13px; font-weight: 500; outline: none; transition: background 0.15s;
+      font-family: inherit;
+    }
+    .lang-select:hover { background: rgba(255,255,255,0.2); }
+    .lang-select option { background: #1a2a4a; color: white; }
+    .darkmode-btn {
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+      color: white; width: 36px; height: 34px; border-radius: 8px; cursor: pointer;
+      font-size: 16px; display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s; flex-shrink: 0;
+    }
+    .darkmode-btn:hover { background: rgba(255,255,255,0.2); }
+
+    /* ── Expense toolbar ── */
+    .expense-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .search-wrap { position: relative; display: flex; align-items: center; }
+    .search-input { border: 1px solid var(--border); border-radius: 20px; padding: 6px 30px 6px 32px; font-size: 13px; font-family: inherit; outline: none; width: 190px; transition: border-color 0.2s, width 0.2s; color: var(--text); background: var(--input-bg); }
+    .search-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(49,130,206,0.1); width: 230px; }
+    .search-icon { position: absolute; left: 10px; color: var(--muted); pointer-events: none; flex-shrink: 0; }
+    .search-clear { position: absolute; right: 9px; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 13px; line-height: 1; padding: 1px 3px; border-radius: 3px; }
+    .search-clear:hover { color: var(--text); background: var(--border); }
+    .search-count { font-size: 12px; color: var(--muted); white-space: nowrap; min-width: 60px; }
+    .sort-select { border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-size: 13px; font-family: inherit; outline: none; color: var(--text); background: var(--input-bg); cursor: pointer; }
+    .sort-select:focus { border-color: var(--blue); }
+
+    /* ── Search highlight ── */
+    mark { background: #fef08a; color: inherit; border-radius: 2px; padding: 0 1px; font-style: normal; }
+
+    /* ── Paid row ── */
+    tbody tr.paid-row { opacity: 0.45; }
+    tbody tr.paid-row:hover { opacity: 0.75; background: #f0fff4 !important; }
+    tbody tr.paid-row td:first-child { text-decoration: line-through; text-decoration-color: var(--muted); }
+
+    /* ── Notes ── */
+    .notes-textarea { width: 100%; min-height: 110px; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; font-size: 14px; font-family: inherit; color: var(--text); background: var(--card); resize: vertical; outline: none; line-height: 1.6; box-shadow: var(--shadow); transition: border-color 0.15s; }
+    .notes-textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(49,130,206,0.1); }
+    .notes-textarea::placeholder { color: var(--muted); }
+
+    /* ── Balance ── */
+    .balance-item { display: flex; justify-content: space-between; align-items: center; padding: 11px 16px; border-bottom: 1px solid var(--border); }
+    .balance-item:last-child { border-bottom: none; }
+    .balance-item .label { color: var(--muted); }
+    .balance-item .value { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .balance-item.balance-total { background: var(--gray-light); }
+    .balance-item.balance-total .label { color: var(--text); font-weight: 600; }
+    .balance-divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+    .hidden { display: none !important; }
+
+    /* ── Modals ── */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: var(--modal-bg); border-radius: 12px; width: 100%; max-width: 480px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); transform: translateY(10px); transition: transform 0.2s; }
+    .overlay.open .modal { transform: translateY(0); }
+    .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .modal-header h2 { font-size: 16px; font-weight: 700; }
+    .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted); line-height: 1; padding: 2px 6px; border-radius: 4px; }
+    .modal-close:hover { background: var(--gray-light); color: var(--text); }
+    .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+    .field input, .field select, .field textarea { border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-size: 14px; font-family: inherit; color: var(--text); background: var(--input-bg); outline: none; transition: border-color 0.15s; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(49,130,206,0.12); }
+    .field textarea { resize: vertical; min-height: 60px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field-hint { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .btn-primary { background: var(--blue); color: white; border: none; border-radius: 6px; padding: 8px 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-secondary { background: var(--gray-light); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 8px 16px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-secondary:hover { background: var(--border); }
+    .month-source-info { background: var(--gray-light); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--muted); }
+    .month-source-info strong { color: var(--text); }
+    .delete-month-btn { margin-right: auto; background: none; border: none; color: var(--red); font-size: 13px; font-weight: 600; cursor: pointer; padding: 6px 0; }
+    .delete-month-btn:hover { text-decoration: underline; }
+
+    /* ── Settings gear button ── */
+    .btn-settings { flex-shrink: 0; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 6px 14px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: background 0.15s; }
+    .btn-settings:hover { background: rgba(255,255,255,0.2); }
+    .btn-settings svg { width: 15px; height: 15px; }
+
+    /* ── Settings panel ── */
+    .settings-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .settings-backdrop.open { opacity: 1; pointer-events: all; }
+    .settings-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 440px; max-width: 100vw; background: var(--modal-bg); z-index: 201; transform: translateX(100%); transition: transform 0.25s cubic-bezier(.4,0,.2,1); box-shadow: -6px 0 40px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+    .settings-panel.open { transform: translateX(0); }
+    .settings-panel-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: var(--gray-light); }
+    .settings-panel-header h2 { font-size: 16px; font-weight: 700; }
+    .settings-panel-body { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 28px; }
+    .settings-section { display: flex; flex-direction: column; gap: 12px; }
+    .settings-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; min-height: 32px; }
+    .tag { display: inline-flex; align-items: center; gap: 5px; background: var(--gray-light); border: 1px solid var(--border); border-radius: 16px; padding: 4px 6px 4px 12px; font-size: 13px; }
+    .tag.paid-tag { background: var(--green-light); border-color: #9ae6b4; }
+    .tag-name { cursor: default; }
+    .tag-paid-btn { background: none; border: none; cursor: pointer; font-size: 13px; padding: 0 2px; line-height: 1; opacity: 0.4; transition: opacity 0.15s; }
+    .tag-paid-btn:hover { opacity: 1; }
+    .tag-paid-btn.active { opacity: 1; }
+    .tag-remove { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 14px; line-height: 1; padding: 0 3px; }
+    .tag-remove:hover { color: var(--red); }
+    .tag-add-row { display: flex; gap: 6px; align-items: center; }
+    .tag-add-input { flex: 1; border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px; font-size: 13px; font-family: inherit; outline: none; transition: border-color 0.15s; }
+    .tag-add-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(49,130,206,0.1); }
+    .tag-add-btn { background: var(--blue); color: white; border: none; border-radius: 6px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+    .tag-add-btn:hover { opacity: 0.88; }
+    .owner-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .color-pick { width: 28px; height: 28px; padding: 2px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: none; }
+    footer { text-align: center; padding: 20px; font-size: 12px; color: var(--muted); }
+
+    @media (max-width: 700px) {
+      .summary { grid-template-columns: 1fr 1fr; }
+      header { padding: 16px 16px 0; }
+      .main { padding: 16px 12px; }
+      .field-row { grid-template-columns: 1fr; }
+      .month-nav { gap: 6px; }
+      .month-current-btn { min-width: 120px; font-size: 13px; padding: 6px 10px; }
+      .mal-btn { padding: 6px 10px; font-size: 11px; }
+      .btn-new-month { padding: 6px 10px 6px 8px; font-size: 11px; }
+      .btn-settings span { display: none; }
+      .header-sep { display: none; }
+      .month-dropdown-panel { min-width: 180px; }
+    }
+
+    /* ── PIN Lock ── */
+    #pin-overlay { position: fixed; inset: 0; z-index: 9999; background: linear-gradient(135deg, #1a365d 0%, #2a4a7f 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    #pin-overlay.hidden { display: none; }
+    .pin-box { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 40px 36px 36px; display: flex; flex-direction: column; align-items: center; gap: 28px; width: 320px; backdrop-filter: blur(8px); }
+    .pin-logo { font-size: 32px; font-weight: 800; color: white; letter-spacing: -1px; text-align: center; }
+    .pin-sub  { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: -20px; text-align: center; }
+    .pin-dots { display: flex; gap: 14px; }
+    .pin-dot  { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.5); background: transparent; transition: background 0.15s, border-color 0.15s; }
+    .pin-dot.filled { background: white; border-color: white; }
+    .pin-numpad { display: grid; grid-template-columns: repeat(3, 72px); gap: 10px; }
+    .pin-btn { height: 56px; border-radius: 12px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18); color: white; font-size: 20px; font-weight: 600; cursor: pointer; transition: background 0.12s, transform 0.08s; display: flex; align-items: center; justify-content: center; user-select: none; }
+    .pin-btn:hover  { background: rgba(255,255,255,0.22); }
+    .pin-btn:active { transform: scale(0.93); }
+    .pin-btn.del    { font-size: 16px; }
+    .pin-btn.enter  { background: rgba(56,161,105,0.7); border-color: rgba(56,161,105,0.9); font-size: 14px; }
+    .pin-btn.enter:hover { background: rgba(56,161,105,0.9); }
+    .pin-error { font-size: 13px; color: #fc8181; min-height: 18px; text-align: center; }
+    @keyframes pinShake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-10px)} 40%{transform:translateX(10px)} 60%{transform:translateX(-8px)} 80%{transform:translateX(8px)} }
+    .pin-box.shake { animation: pinShake 0.4s ease; }
+
+    /* ── Credential login box ── */
+    .pin-box-creds { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 40px 36px 36px; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 320px; backdrop-filter: blur(8px); }
+    .creds-form { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+    .creds-input { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; padding: 11px 14px; font-size: 14px; font-family: inherit; outline: none; width: 100%; }
+    .creds-input::placeholder { color: rgba(255,255,255,0.4); }
+    .creds-input:focus { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.15); }
+    .creds-submit { background: rgba(56,161,105,0.75); border: 1px solid rgba(56,161,105,0.9); color: white; border-radius: 10px; padding: 12px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; font-family: inherit; transition: background 0.15s; }
+    .creds-submit:hover { background: rgba(56,161,105,0.95); }
+    .creds-submit:disabled { opacity: 0.5; cursor: default; }
+    .creds-error { font-size: 13px; color: #fc8181; min-height: 18px; text-align: center; }
+
+    /* ── User management in settings ── */
+    .user-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; background: var(--gray-light); margin-bottom: 6px; border: 1px solid var(--border); }
+    .user-name { flex: 1; font-size: 13px; font-weight: 600; }
+    .user-role-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+    .role-admin { background: #ebf4ff; color: #2b6cb0; }
+    .role-user  { background: #f0fff4; color: #276749; }
+    body.dark .role-admin { background: #1a2a3d; color: #63b3ed; }
+    body.dark .role-user  { background: #1a2d1a; color: #68d391; }
+    .user-del-btn { width: 24px; height: 24px; border-radius: 50%; background: transparent; border: 1px solid var(--border); color: var(--muted); font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+    .user-del-btn:hover:not(:disabled) { background: var(--red-light); border-color: var(--red); color: var(--red); }
+    .user-del-btn:disabled { opacity: 0.35; cursor: default; }
+    .auth-mode-badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: #ebf4ff; color: #2b6cb0; margin-right: 8px; }
+    body.dark .auth-mode-badge { background: #1a2a3d; color: #63b3ed; }
+    .auth-switch-btn { font-size: 12px; font-weight: 600; background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; cursor: pointer; color: var(--muted); transition: all 0.15s; }
+    .auth-switch-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* ── Loading spinner ── */
+    #loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.65); z-index: 8000; display: flex; align-items: center; justify-content: center; }
+    #loading-overlay.hidden { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: #3182ce; border-radius: 50%; animation: spin 0.7s linear infinite; }
+
+    /* ── Copyright ── */
+    .copyright { text-align: center; font-size: 11px; color: var(--muted); opacity: 0.55; padding: 14px 20px 18px; }
+  </style>
+</head>
+<body>
+
+<!-- PIN Lock Overlay -->
+<div id="pin-overlay">
+  <div class="pin-box" id="pin-box">
+    <div class="pin-logo" id="pin-logo">Cashnarok™</div>
+    <div class="pin-sub">Skriv inn PIN-kode</div>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-numpad">
+      <button class="pin-btn" onclick="pinPress('1')">1</button>
+      <button class="pin-btn" onclick="pinPress('2')">2</button>
+      <button class="pin-btn" onclick="pinPress('3')">3</button>
+      <button class="pin-btn" onclick="pinPress('4')">4</button>
+      <button class="pin-btn" onclick="pinPress('5')">5</button>
+      <button class="pin-btn" onclick="pinPress('6')">6</button>
+      <button class="pin-btn" onclick="pinPress('7')">7</button>
+      <button class="pin-btn" onclick="pinPress('8')">8</button>
+      <button class="pin-btn" onclick="pinPress('9')">9</button>
+      <button class="pin-btn del" onclick="pinDelete()">⌫</button>
+      <button class="pin-btn" onclick="pinPress('0')">0</button>
+      <button class="pin-btn enter" onclick="pinSubmit()">OK</button>
+    </div>
+    <div class="pin-error" id="pin-error"></div>
+  </div>
+
+  <!-- Users mode: username + password form -->
+  <div class="pin-box-creds hidden" id="pin-box-creds">
+    <div class="pin-logo" id="pin-logo-creds">Cashnarok™</div>
+    <div class="pin-sub" id="creds-sub" style="color:rgba(255,255,255,0.6);font-size:13px;margin-top:-12px">Logg inn</div>
+    <form class="creds-form" onsubmit="loginWithCredentials(event)">
+      <input class="creds-input" type="text" id="creds-username" autocomplete="username"
+             placeholder="Brukernavn" autocapitalize="none" spellcheck="false">
+      <input class="creds-input" type="password" id="creds-password" autocomplete="current-password"
+             placeholder="Passord">
+      <button class="creds-submit" type="submit" id="creds-submit">Logg inn</button>
+    </form>
+    <div class="creds-error" id="creds-error"></div>
+  </div>
+</div>
+
+<!-- Loading spinner -->
+<div id="loading-overlay" class="hidden">
+  <div class="spinner"></div>
+</div>
+
+<header>
+  <div class="header-top">
+    <div>
+      <h1 id="app-title">Cashnarok™</h1>
+      <p id="app-subtitle">Valhalla Certified™ – For Mortal Wallets</p>
+    </div>
+    <div class="header-controls">
+      <select class="lang-select" id="lang-select" onchange="setLang(this.value)">
+        <option value="no">🇳🇴 Norsk</option>
+        <option value="en">🇬🇧 English</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+      <button class="darkmode-btn" id="darkmode-btn" onclick="toggleDarkMode()" title="Mørk/lys modus">🌙</button>
+      <span class="header-sep"></span>
+      <button class="btn-settings" onclick="openSettings()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span data-i18n="btn_settings">Innstillinger</span>
+      </button>
+    </div>
+  </div>
+  <div class="month-nav" id="month-nav"></div>
+</header>
+
+<div class="main">
+  <div id="mal-notice" class="mal-notice hidden">
+    <span data-i18n="mal_notice">📋 Mal – Dette er malen som brukes som utgangspunkt for nye måneder.</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-create-from-mal" onclick="openNewMonthModal()" data-i18n="btn_create_from_mal">Opprett ny måned fra mal →</button>
+      <button class="btn-create-from-mal" onclick="applyMalToCurrentMonth()" data-i18n="btn_apply_to_current">Bruk på gjeldende måned →</button>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="card income">
+      <div class="card-label" data-i18n="card_income">Inntekter</div>
+      <div class="card-value" id="s-income">–</div>
+      <div class="card-sub" id="s-income-sub"></div>
+    </div>
+    <div class="card expenses">
+      <div class="card-label" data-i18n="card_budget">Budsjetterte utgifter</div>
+      <div class="card-value" id="s-budget">–</div>
+      <div class="card-sub" id="s-budget-sub"></div>
+    </div>
+    <div class="card expenses">
+      <div class="card-label" data-i18n="card_actual">Faktiske utgifter</div>
+      <div class="card-value" id="s-actual">–</div>
+      <div class="card-sub" id="s-actual-sub"></div>
+    </div>
+    <div class="card balance">
+      <div class="card-label" data-i18n="card_leftover">Til overs</div>
+      <div class="card-value" id="s-balance">–</div>
+      <div class="card-sub" id="s-balance-sub"></div>
+      <div class="progress-bar"><div class="progress-bar-fill" id="s-bar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="controls" id="owner-filter"></div>
+
+  <div class="section income-section">
+    <div class="section-header">
+      <div class="section-title"><span data-i18n="sec_income">Inntekter</span></div>
+      <button class="btn-add" onclick="openIncomeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span data-i18n="btn_add_income">Legg til inntekt</span>
+      </button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-i18n="th_source">Kilde</th>
+            <th class="num" data-i18n="th_budgeted">Budsjettert</th>
+            <th class="num" data-i18n="th_actual">Faktisk</th>
+            <th class="num" data-i18n="th_variance">Avvik</th>
+            <th class="actions-col"></th>
+          </tr>
+        </thead>
+        <tbody id="income-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section expense-section">
+    <div class="section-header">
+      <div class="section-title"><span data-i18n="sec_expenses">Utgifter</span></div>
+      <div class="expense-toolbar">
+        <div class="search-wrap">
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="search-input" id="expense-search" type="text" autocomplete="off" oninput="setSearch(this.value)">
+          <button class="search-clear hidden" id="search-clear" onclick="clearSearch()">✕</button>
+        </div>
+        <span class="search-count" id="search-count"></span>
+        <select class="sort-select" id="sort-select" onchange="setSort(this.value)">
+          <option value="status-asc"></option>
+          <option value="name-asc"></option>
+          <option value="name-desc"></option>
+          <option value="budgeted-desc"></option>
+          <option value="budgeted-asc"></option>
+          <option value="owner-asc"></option>
+          <option value="type-asc"></option>
+        </select>
+        <button class="btn-add" onclick="openExpenseModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span data-i18n="btn_add_expense">Legg til utgift</span>
+        </button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-i18n="th_expense">Utgift</th>
+            <th class="num" data-i18n="th_budgeted">Budsjettert</th>
+            <th class="num" data-i18n="th_actual">Faktisk</th>
+            <th class="num" data-i18n="th_variance">Avvik</th>
+            <th data-i18n="th_type">Type</th>
+            <th data-i18n="th_status">Status</th>
+            <th data-i18n="th_owner">Eier</th>
+            <th data-i18n="th_notes">Notater</th>
+            <th class="actions-col"></th>
+          </tr>
+        </thead>
+        <tbody id="expense-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section notes-section">
+    <div class="section-header">
+      <div class="section-title" style="gap:8px;display:flex;align-items:center">
+        <span style="display:inline-block;width:3px;height:16px;border-radius:2px;background:#805ad5"></span><span data-i18n="sec_notes">Notater</span>
+      </div>
+    </div>
+    <textarea class="notes-textarea" id="notes-field" placeholder="Skriv notater for denne måneden her…" oninput="saveNotes()"></textarea>
+  </div>
+
+  <div class="section balance-section">
+    <div class="section-title" data-i18n="sec_balance">Balanse</div>
+    <div class="table-wrap">
+      <div class="balance-item"><span class="label" data-i18n="b_paid">Betalt</span><span class="value" id="b-paid">–</span></div>
+      <div class="balance-item"><span class="label" data-i18n="b_unpaid">Ikke betalt (budsjettert)</span><span class="value" id="b-unpaid">–</span></div>
+      <div class="balance-divider"></div>
+      <div id="b-owner-rows"></div>
+      <div class="balance-item balance-total">
+        <span class="label" data-i18n="b_total">Total budsjett (alle eiere)</span>
+        <span class="value" id="b-owner-total">–</span>
+      </div>
+      <div class="balance-divider"></div>
+      <div class="balance-item">
+        <span class="label" style="font-weight:700" data-i18n="b_leftover">Til overs</span>
+        <span class="value" id="b-leftover">–</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="margin-bottom:0">
+    <div class="section-header">
+      <div class="section-title" style="gap:8px;display:flex;align-items:center">
+        <span style="display:inline-block;width:3px;height:16px;border-radius:2px;background:#805ad5"></span><span data-i18n="sec_fixed_notes">Fast notat</span>
+      </div>
+    </div>
+    <textarea class="notes-textarea" id="permanent-notes-field"
+      placeholder="Kontonummer, faste avtaler og annen permanent informasjon…"
+      oninput="savePermanentNotes()"></textarea>
+  </div>
+</div>
+
+<footer id="app-footer" class="hidden"></footer>
+<p class="copyright">Cashnarok™ © 2026 Roger Johannesen – Valhalla Certified™</p>
+
+<!-- Income Modal -->
+<div class="overlay" id="income-overlay" onclick="closeOnBackdrop(event,'income-overlay')">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="income-modal-title">Legg til inntekt</h2>
+      <button class="modal-close" onclick="closeModal('income-overlay')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label data-i18n="th_source">Kilde</label><input type="text" id="i-name" placeholder="f.eks. Lønn"></div>
+      <div class="field-row">
+        <div class="field"><label><span data-i18n="th_budgeted">Budsjettert</span> <span class="currency-hint"></span></label><input type="number" id="i-budgeted" placeholder="0" min="0"></div>
+        <div class="field"><label><span data-i18n="th_actual">Faktisk</span> <span class="currency-hint"></span></label><input type="number" id="i-actual" placeholder="Ikke registrert"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('income-overlay')" data-i18n="btn_cancel">Avbryt</button>
+      <button class="btn-primary" onclick="saveIncome()" data-i18n="btn_save">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Expense Modal -->
+<div class="overlay" id="expense-overlay" onclick="closeOnBackdrop(event,'expense-overlay')">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="expense-modal-title">Legg til utgift</h2>
+      <button class="modal-close" onclick="closeModal('expense-overlay')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label data-i18n="th_expense">Utgift</label><input type="text" id="e-name" placeholder="f.eks. Boliglån"></div>
+      <div class="field-row">
+        <div class="field"><label><span data-i18n="th_budgeted">Budsjettert</span> <span class="currency-hint"></span></label><input type="number" id="e-budgeted" placeholder="0" min="0"></div>
+        <div class="field"><label><span data-i18n="th_actual">Faktisk</span> <span class="currency-hint"></span></label><input type="number" id="e-actual" placeholder="Ikke registrert"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label data-i18n="th_type">Type</label><select id="e-type"></select></div>
+        <div class="field"><label data-i18n="th_status">Status</label><select id="e-status"></select></div>
+      </div>
+      <div class="field"><label data-i18n="th_owner">Eier</label><select id="e-owner"></select></div>
+      <div class="field"><label data-i18n="th_notes">Notater</label><textarea id="e-note" placeholder="Valgfritt…" id="e-note-field"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('expense-overlay')" data-i18n="btn_cancel">Avbryt</button>
+      <button class="btn-primary" onclick="saveExpense()" data-i18n="btn_save">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Month Modal -->
+<div class="overlay" id="newmonth-overlay" onclick="closeOnBackdrop(event,'newmonth-overlay')">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Opprett ny måned</h2>
+      <button class="modal-close" onclick="closeModal('newmonth-overlay')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Måned</label>
+          <select id="nm-month">
+            <option value="01">Januar</option><option value="02">Februar</option>
+            <option value="03">Mars</option><option value="04">April</option>
+            <option value="05">Mai</option><option value="06">Juni</option>
+            <option value="07">Juli</option><option value="08">August</option>
+            <option value="09">September</option><option value="10">Oktober</option>
+            <option value="11">November</option><option value="12">Desember</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>År</label>
+          <input type="number" id="nm-year" min="2020" max="2099" placeholder="2026">
+        </div>
+      </div>
+      <div class="month-source-info">Utgiftspostene kopieres fra <strong>Mal</strong>. Faktiske beløp og status nullstilles.</div>
+      <div id="nm-error" style="color:var(--red);font-size:13px;display:none;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('newmonth-overlay')">Avbryt</button>
+      <button class="btn-primary" onclick="createNewMonth()">Opprett måned</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings panel -->
+<div class="settings-backdrop" id="settings-backdrop" onclick="closeSettings()"></div>
+<div class="settings-panel" id="settings-panel">
+  <div class="settings-panel-header">
+    <h2 data-i18n="settings_title">⚙ Innstillinger</h2>
+    <button class="modal-close" onclick="closeSettings()">✕</button>
+  </div>
+  <div class="settings-panel-body">
+    <div class="settings-section">
+      <div class="settings-section-title" data-i18n="sec_appearance">Utseende</div>
+      <div class="field"><label data-i18n="lbl_title">Tittel</label><input type="text" id="cfg-title" oninput="SETTINGS.title=this.value;applySettings()"></div>
+      <div class="field"><label data-i18n="lbl_subtitle">Undertittel</label><input type="text" id="cfg-subtitle" oninput="SETTINGS.subtitle=this.value;applySettings()"></div>
+      <div class="field"><label data-i18n="lbl_footer">Bunntekst</label><input type="text" id="cfg-footer" placeholder="Valgfri tekst i bunnen…" oninput="SETTINGS.footer=this.value;applySettings()"></div>
+      <div class="field">
+        <label data-i18n="lbl_currency">Valuta</label>
+        <select id="cfg-currency" onchange="SETTINGS.currency=this.value;applySettings()">
+          <option value="NOK">Norske kroner (NOK)</option>
+          <option value="SEK">Svenske kroner (SEK)</option>
+          <option value="DKK">Danske kroner (DKK)</option>
+          <option value="ISK">Islandske kroner (ISK)</option>
+          <option value="EUR">Euro (EUR)</option>
+          <option value="USD">US dollar (USD)</option>
+          <option value="GBP">Britiske pund (GBP)</option>
+          <option value="CHF">Sveitsiske franc (CHF)</option>
+        </select>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title" data-i18n="sec_owners">Eiere</div>
+      <div class="tag-list" id="cfg-owners"></div>
+      <div class="tag-add-row">
+        <input class="tag-add-input" type="text" id="cfg-owner-input" placeholder="Nytt navn…" onkeydown="if(event.key==='Enter')addOwner()">
+        <input class="color-pick" type="color" id="cfg-owner-color" value="#3182ce" title="Velg farge">
+        <button class="tag-add-btn" onclick="addOwner()" data-i18n="btn_add">Legg til</button>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title" data-i18n="sec_types">Utgiftstyper</div>
+      <div class="tag-list" id="cfg-types"></div>
+      <div class="tag-add-row">
+        <input class="tag-add-input" type="text" id="cfg-type-input" placeholder="Ny type…" onkeydown="if(event.key==='Enter')addType()">
+        <button class="tag-add-btn" onclick="addType()" data-i18n="btn_add">Legg til</button>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">
+        <span data-i18n="sec_statuses">Statuser</span>
+        <span style="font-weight:400;text-transform:none;font-size:11px;margin-left:6px;color:var(--muted)" data-i18n="hint_paid_star">★ = markert som «betalt»</span>
+      </div>
+      <div class="tag-list" id="cfg-statuses"></div>
+      <div class="tag-add-row">
+        <input class="tag-add-input" type="text" id="cfg-status-input" placeholder="Ny status…" onkeydown="if(event.key==='Enter')addStatus()">
+        <button class="tag-add-btn" onclick="addStatus()" data-i18n="btn_add">Legg til</button>
+      </div>
+    </div>
+    <!-- PIN section: only shown in pin mode -->
+    <div class="settings-section" id="cfg-section-pin">
+      <div class="settings-section-title" data-i18n="sec_pin">PIN-kode</div>
+      <div class="field">
+        <label data-i18n="lbl_new_pin">Ny PIN-kode (sifre)</label>
+        <input type="password" id="cfg-pin" placeholder="Endre PIN…" maxlength="12"
+          style="letter-spacing:4px;font-size:18px"
+          oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      </div>
+      <div class="tag-add-row" style="justify-content:flex-end">
+        <button class="tag-add-btn" onclick="savePin()" data-i18n="btn_save_pin">Lagre PIN</button>
+      </div>
+      <div id="pin-save-msg" style="font-size:12px;color:var(--green);min-height:16px;margin-top:4px"></div>
+    </div>
+
+    <!-- Auth mode + user management (admin only in users mode) -->
+    <div class="settings-section">
+      <div class="settings-section-title" data-i18n="sec_auth">Autentisering</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="auth-mode-badge" id="cfg-auth-mode-label">PIN</span>
+        <button class="auth-switch-btn" id="cfg-auth-switch-btn" onclick="switchAuthMode()"></button>
+      </div>
+      <p style="font-size:12px;color:var(--muted)" data-i18n="auth_mode_hint">Bytt til brukerkontoer for offentlig tilgjengelige servere.</p>
+    </div>
+
+    <!-- User list: only shown in users mode for admins -->
+    <div class="settings-section" id="cfg-section-users" style="display:none">
+      <div class="settings-section-title" data-i18n="sec_users">Brukere</div>
+      <div id="cfg-user-list" style="margin-bottom:10px"></div>
+      <div class="tag-add-row" style="flex-wrap:wrap;gap:6px">
+        <input class="tag-add-input" type="text" id="cfg-user-username"
+               placeholder="Brukernavn" autocapitalize="none" spellcheck="false"
+               onkeydown="if(event.key==='Enter')addUser()">
+        <input class="tag-add-input" type="password" id="cfg-user-password"
+               placeholder="Passord (min. 6 tegn)" style="width:160px"
+               onkeydown="if(event.key==='Enter')addUser()">
+        <select class="tag-add-input" id="cfg-user-role" style="width:auto;padding:6px 8px">
+          <option value="user" data-i18n="role_user">Bruker</option>
+          <option value="admin" data-i18n="role_admin">Admin</option>
+        </select>
+        <button class="tag-add-btn" onclick="addUser()" data-i18n="btn_add">Legg til</button>
+      </div>
+      <div id="cfg-user-msg" style="font-size:12px;min-height:16px;margin-top:6px"></div>
+    </div>
+
+    <!-- Change own password: only shown in users mode -->
+    <div class="settings-section" id="cfg-section-mypassword" style="display:none">
+      <div class="settings-section-title" data-i18n="sec_my_password">Mitt passord</div>
+      <div class="field">
+        <label data-i18n="lbl_new_pw">Nytt passord (min. 6 tegn)</label>
+        <input type="password" id="cfg-my-password" placeholder="Nytt passord…" autocomplete="new-password">
+      </div>
+      <div class="tag-add-row" style="justify-content:flex-end">
+        <button class="tag-add-btn" onclick="saveMyPassword()" data-i18n="btn_save_pw">Lagre passord</button>
+      </div>
+      <div id="cfg-pw-msg" style="font-size:12px;color:var(--green);min-height:16px;margin-top:4px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Month Modal -->
+<div class="overlay" id="deletemonth-overlay" onclick="closeOnBackdrop(event,'deletemonth-overlay')">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <h2>Slett måned</h2>
+      <button class="modal-close" onclick="closeModal('deletemonth-overlay')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--muted)">Er du sikker på at du vil slette <strong id="delete-month-name"></strong>? Alle data slettes permanent.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('deletemonth-overlay')">Avbryt</button>
+      <button class="btn-primary" style="background:var(--red)" onclick="confirmDeleteMonth()">Slett</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── i18n ─────────────────────────────────────────────────────
+const STRINGS = {
+  no: {
+    btn_settings:'Innstillinger', tab_mal:'Mal', btn_new_month:'Ny måned',
+    card_income:'Inntekter', card_budget:'Budsjetterte utgifter', card_actual:'Faktiske utgifter', card_leftover:'Til overs',
+    filter_owner:'Filtrer eier:', filter_all:'Alle',
+    sec_income:'Inntekter', sec_expenses:'Utgifter', sec_notes:'Notater', sec_fixed_notes:'Fast notat', sec_balance:'Balanse',
+    btn_add_income:'Legg til inntekt', btn_add_expense:'Legg til utgift',
+    th_source:'Kilde', th_budgeted:'Budsjettert', th_actual:'Faktisk', th_variance:'Avvik',
+    th_expense:'Utgift', th_type:'Type', th_status:'Status', th_owner:'Eier', th_notes:'Notater',
+    sum_income:'Sum inntekter', sum_expenses:'Sum utgifter',
+    b_paid:'Betalt', b_unpaid:'Ikke betalt (budsjettert)', b_total:'Total budsjett (alle eiere)', b_leftover:'Til overs', b_owner_budget:'budsjett',
+    sort_status:'Status', sort_name_asc:'Navn A–Å', sort_name_desc:'Navn Å–A', sort_budget_desc:'Budsjett ↓', sort_budget_asc:'Budsjett ↑', sort_owner:'Eier', sort_type:'Type',
+    search_ph:'Søk i utgifter…', search_of:'av', search_items:'poster', no_results:'Ingen treff',
+    confirm_del_income:'Slett denne inntektsposten?', confirm_del_expense:'Slett denne utgiftsposten?',
+    click_edit:'Klikk for å redigere', click_toggle:'Klikk for å bytte status',
+    ph_month_notes:'Skriv notater for denne måneden her…',
+    ph_perm_notes:'Kontonummer, faste avtaler og annen permanent informasjon…',
+    paid_count_of:'av', paid_count_paid:'betalt',
+    settings_title:'⚙ Innstillinger',
+    sec_appearance:'Utseende', lbl_title:'Tittel', lbl_subtitle:'Undertittel',
+    lbl_footer:'Bunntekst', ph_footer:'Valgfri tekst i bunnen…', lbl_currency:'Valuta',
+    sec_owners:'Eiere', ph_owner:'Nytt navn…',
+    sec_types:'Utgiftstyper', ph_type:'Ny type…',
+    sec_statuses:'Statuser', hint_paid_star:'★ = markert som «betalt»',
+    ph_status:'Ny status…', btn_add:'Legg til',
+    btn_cancel:'Avbryt', btn_save:'Lagre', ph_optional:'Valgfritt…',
+    sec_pin:'PIN-kode', lbl_new_pin:'Ny PIN-kode (sifre)', ph_pin:'Endre PIN…', btn_save_pin:'Lagre PIN',
+    mal_notice:'📋 Mal – Dette er malen som brukes som utgangspunkt for nye måneder.',
+    btn_create_from_mal:'Opprett ny måned fra mal →',
+    btn_apply_to_current:'Bruk på gjeldende måned →',
+    confirm_apply_mal:'Dette erstatter budsjett for {m} med data fra malen.\nFaktiske beløp og notater beholdes.\n\nFortsette?',
+    defaultTypes: ['Fast','Variabel','Stipulert','Midlertidig'],
+    defaultStatuses: ['Ikke betalt','Betalt','Ikke gjeldende'],
+    defaultPaidStatus: 'Betalt',
+    sec_auth:'Autentisering', auth_mode_hint:'Bytt til brukerkontoer for offentlig tilgjengelige servere.',
+    auth_mode_pin:'PIN-kode', auth_mode_users:'Brukerkontoer',
+    auth_switch_to_users:'Bytt til brukerkontoer', auth_switch_to_pin:'Bytt til PIN-kode',
+    auth_switch_warn_users:'Du bytter til brukernavn/passord-innlogging.\n\nPass på at minst én bruker finnes før du logger ut.\n\nFortsette?',
+    auth_switch_warn_pin:'Du bytter tilbake til PIN-innlogging.\nAlle brukerkontoer beholdes men brukes ikke lenger.\n\nFortsette?',
+    auth_need_user:'Legg til minst én bruker før du bytter modus.',
+    sec_users:'Brukere', btn_del_user:'Slett bruker',
+    confirm_del_user:'Slett brukeren «{u}»?',
+    role_admin:'Admin', role_user:'Bruker',
+    user_added:'Bruker lagt til.', user_add_error:'Kunne ikke legge til bruker.',
+    user_pw_too_short:'Passord må være minst 6 tegn.',
+    sec_my_password:'Mitt passord', lbl_new_pw:'Nytt passord (min. 6 tegn)',
+    btn_save_pw:'Lagre passord', pw_saved:'Passord lagret.',
+    creds_login:'Logg inn', creds_wrong:'Feil brukernavn eller passord.',
+    creds_required:'Fyll inn brukernavn og passord.',
+  },
+  en: {
+    btn_settings:'Settings', tab_mal:'Template', btn_new_month:'New month',
+    card_income:'Income', card_budget:'Budgeted expenses', card_actual:'Actual expenses', card_leftover:'Remaining',
+    filter_owner:'Filter owner:', filter_all:'All',
+    sec_income:'Income', sec_expenses:'Expenses', sec_notes:'Notes', sec_fixed_notes:'Permanent note', sec_balance:'Balance',
+    btn_add_income:'Add income', btn_add_expense:'Add expense',
+    th_source:'Source', th_budgeted:'Budgeted', th_actual:'Actual', th_variance:'Variance',
+    th_expense:'Expense', th_type:'Type', th_status:'Status', th_owner:'Owner', th_notes:'Notes',
+    sum_income:'Total income', sum_expenses:'Total expenses',
+    b_paid:'Paid', b_unpaid:'Unpaid (budgeted)', b_total:'Total budget (all owners)', b_leftover:'Remaining', b_owner_budget:'budget',
+    sort_status:'Status', sort_name_asc:'Name A–Z', sort_name_desc:'Name Z–A', sort_budget_desc:'Budget ↓', sort_budget_asc:'Budget ↑', sort_owner:'Owner', sort_type:'Type',
+    search_ph:'Search expenses…', search_of:'of', search_items:'items', no_results:'No results',
+    confirm_del_income:'Delete this income entry?', confirm_del_expense:'Delete this expense entry?',
+    click_edit:'Click to edit', click_toggle:'Click to toggle status',
+    ph_month_notes:'Write notes for this month here…',
+    ph_perm_notes:'Account numbers, standing orders, and other permanent information…',
+    paid_count_of:'of', paid_count_paid:'paid',
+    settings_title:'⚙ Settings',
+    sec_appearance:'Appearance', lbl_title:'Title', lbl_subtitle:'Subtitle',
+    lbl_footer:'Footer', ph_footer:'Optional footer text…', lbl_currency:'Currency',
+    sec_owners:'Owners', ph_owner:'New name…',
+    sec_types:'Expense types', ph_type:'New type…',
+    sec_statuses:'Statuses', hint_paid_star:'★ = marked as "paid"',
+    ph_status:'New status…', btn_add:'Add',
+    btn_cancel:'Cancel', btn_save:'Save', ph_optional:'Optional…',
+    sec_pin:'PIN code', lbl_new_pin:'New PIN code (digits)', ph_pin:'Change PIN…', btn_save_pin:'Save PIN',
+    mal_notice:'📋 Template – This is the template used as a starting point for new months.',
+    btn_create_from_mal:'Create new month from template →',
+    btn_apply_to_current:'Apply to current month →',
+    confirm_apply_mal:'This will replace the budget for {m} with data from the template.\nActual amounts and notes will be kept.\n\nContinue?',
+    defaultTypes: ['Fixed','Variable','Estimated','Temporary'],
+    defaultStatuses: ['Unpaid','Paid','N/A'],
+    defaultPaidStatus: 'Paid',
+    sec_auth:'Authentication', auth_mode_hint:'Switch to user accounts for publicly accessible servers.',
+    auth_mode_pin:'PIN code', auth_mode_users:'User accounts',
+    auth_switch_to_users:'Switch to user accounts', auth_switch_to_pin:'Switch to PIN code',
+    auth_switch_warn_users:'You are switching to username/password login.\n\nMake sure at least one user exists before logging out.\n\nContinue?',
+    auth_switch_warn_pin:'You are switching back to PIN login.\nAll user accounts are kept but will no longer be used.\n\nContinue?',
+    auth_need_user:'Add at least one user before switching mode.',
+    sec_users:'Users', btn_del_user:'Delete user',
+    confirm_del_user:'Delete user "{u}"?',
+    role_admin:'Admin', role_user:'User',
+    user_added:'User added.', user_add_error:'Could not add user.',
+    user_pw_too_short:'Password must be at least 6 characters.',
+    sec_my_password:'My password', lbl_new_pw:'New password (min. 6 characters)',
+    btn_save_pw:'Save password', pw_saved:'Password saved.',
+    creds_login:'Log in', creds_wrong:'Incorrect username or password.',
+    creds_required:'Please enter username and password.',
+  },
+  de: {
+    btn_settings:'Einstellungen', tab_mal:'Vorlage', btn_new_month:'Neuer Monat',
+    card_income:'Einnahmen', card_budget:'Geplante Ausgaben', card_actual:'Tatsächliche Ausgaben', card_leftover:'Übrig',
+    filter_owner:'Besitzer filtern:', filter_all:'Alle',
+    sec_income:'Einnahmen', sec_expenses:'Ausgaben', sec_notes:'Notizen', sec_fixed_notes:'Dauerhafter Hinweis', sec_balance:'Bilanz',
+    btn_add_income:'Einnahme hinzufügen', btn_add_expense:'Ausgabe hinzufügen',
+    th_source:'Quelle', th_budgeted:'Geplant', th_actual:'Tatsächlich', th_variance:'Abweichung',
+    th_expense:'Ausgabe', th_type:'Typ', th_status:'Status', th_owner:'Besitzer', th_notes:'Notizen',
+    sum_income:'Einnahmen gesamt', sum_expenses:'Ausgaben gesamt',
+    b_paid:'Bezahlt', b_unpaid:'Unbezahlt (geplant)', b_total:'Gesamtbudget (alle Besitzer)', b_leftover:'Übrig', b_owner_budget:'Budget',
+    sort_status:'Status', sort_name_asc:'Name A–Z', sort_name_desc:'Name Z–A', sort_budget_desc:'Budget ↓', sort_budget_asc:'Budget ↑', sort_owner:'Besitzer', sort_type:'Typ',
+    search_ph:'Ausgaben suchen…', search_of:'von', search_items:'Einträge', no_results:'Keine Ergebnisse',
+    confirm_del_income:'Diesen Eintrag löschen?', confirm_del_expense:'Diese Ausgabe löschen?',
+    click_edit:'Zum Bearbeiten klicken', click_toggle:'Status umschalten',
+    ph_month_notes:'Notizen für diesen Monat hier eingeben…',
+    ph_perm_notes:'Kontonummern, Daueraufträge und andere permanente Informationen…',
+    paid_count_of:'von', paid_count_paid:'bezahlt',
+    settings_title:'⚙ Einstellungen',
+    sec_appearance:'Erscheinungsbild', lbl_title:'Titel', lbl_subtitle:'Untertitel',
+    lbl_footer:'Fußzeile', ph_footer:'Optionaler Fußzeilentext…', lbl_currency:'Währung',
+    sec_owners:'Besitzer', ph_owner:'Neuer Name…',
+    sec_types:'Ausgabetypen', ph_type:'Neuer Typ…',
+    sec_statuses:'Status', hint_paid_star:'★ = als „bezahlt" markiert',
+    ph_status:'Neuer Status…', btn_add:'Hinzufügen',
+    btn_cancel:'Abbrechen', btn_save:'Speichern', ph_optional:'Optional…',
+    sec_pin:'PIN-Code', lbl_new_pin:'Neuer PIN-Code (Ziffern)', ph_pin:'PIN ändern…', btn_save_pin:'PIN speichern',
+    mal_notice:'📋 Vorlage – Diese Vorlage wird als Grundlage für neue Monate verwendet.',
+    btn_create_from_mal:'Neuen Monat aus Vorlage erstellen →',
+    btn_apply_to_current:'Auf aktuellen Monat anwenden →',
+    confirm_apply_mal:'Das Budget für {m} wird durch Vorlagendaten ersetzt.\nTatsächliche Beträge und Notizen bleiben erhalten.\n\nFortfahren?',
+    defaultTypes: ['Fest','Variabel','Geschätzt','Vorübergehend'],
+    defaultStatuses: ['Unbezahlt','Bezahlt','Nicht zutreffend'],
+    defaultPaidStatus: 'Bezahlt',
+    sec_auth:'Authentifizierung', auth_mode_hint:'Wechseln Sie zu Benutzerkonten für öffentlich zugängliche Server.',
+    auth_mode_pin:'PIN-Code', auth_mode_users:'Benutzerkonten',
+    auth_switch_to_users:'Zu Benutzerkonten wechseln', auth_switch_to_pin:'Zu PIN-Code wechseln',
+    auth_switch_warn_users:'Sie wechseln zur Benutzername/Passwort-Anmeldung.\n\nStellen Sie sicher, dass mindestens ein Benutzer vorhanden ist.\n\nFortfahren?',
+    auth_switch_warn_pin:'Sie wechseln zurück zur PIN-Anmeldung.\nAlle Benutzerkonten bleiben erhalten.\n\nFortfahren?',
+    auth_need_user:'Fügen Sie mindestens einen Benutzer hinzu, bevor Sie den Modus wechseln.',
+    sec_users:'Benutzer', btn_del_user:'Benutzer löschen',
+    confirm_del_user:'Benutzer „{u}" löschen?',
+    role_admin:'Admin', role_user:'Benutzer',
+    user_added:'Benutzer hinzugefügt.', user_add_error:'Benutzer konnte nicht hinzugefügt werden.',
+    user_pw_too_short:'Das Passwort muss mindestens 6 Zeichen lang sein.',
+    sec_my_password:'Mein Passwort', lbl_new_pw:'Neues Passwort (min. 6 Zeichen)',
+    btn_save_pw:'Passwort speichern', pw_saved:'Passwort gespeichert.',
+    creds_login:'Anmelden', creds_wrong:'Falscher Benutzername oder Passwort.',
+    creds_required:'Bitte Benutzername und Passwort eingeben.',
+  }
+};
+function T(k) { return STRINGS[SETTINGS.lang]?.[k] ?? STRINGS.no[k] ?? k; }
+
+// ── Settings (defaults, overwritten by API on load) ───────────
+const SETTINGS = {
+  title: 'Cashnarok™', subtitle: 'Valhalla Certified™ – For Mortal Wallets',
+  footer: '', owners: [{name:'Person 1',color:'#2b6cb0'},{name:'Person 2',color:'#b83280'}],
+  types: ['Fast','Variabel','Stipulert','Midlertidig'],
+  statuses: ['Ikke betalt','Betalt','Ikke gjeldende'],
+  paidStatus: 'Betalt', permanentNotes: '', lang: 'no', pin: '1234',
+  currency: 'NOK', darkMode: false,
+};
+
+const CURRENCIES = {
+  NOK: { symbol: 'kr',  label: 'Norske kroner (NOK)',    pos: 'after'  },
+  SEK: { symbol: 'kr',  label: 'Svenske kroner (SEK)',   pos: 'after'  },
+  DKK: { symbol: 'kr',  label: 'Danske kroner (DKK)',    pos: 'after'  },
+  ISK: { symbol: 'kr',  label: 'Islandske kroner (ISK)', pos: 'after'  },
+  EUR: { symbol: '€',   label: 'Euro (EUR)',             pos: 'after'  },
+  USD: { symbol: '$',   label: 'US dollar (USD)',        pos: 'before' },
+  GBP: { symbol: '£',   label: 'Britiske pund (GBP)',   pos: 'before' },
+  CHF: { symbol: 'Fr.', label: 'Sveitsiske franc (CHF)', pos: 'after'  },
+};
+
+// ── Dark mode ─────────────────────────────────────────────────
+function applyDarkMode() {
+  const dark = !!SETTINGS.darkMode;
+  document.body.classList.toggle('dark', dark);
+  const btn = document.getElementById('darkmode-btn');
+  if (btn) btn.textContent = dark ? '☀️' : '🌙';
+}
+function toggleDarkMode() {
+  SETTINGS.darkMode = !SETTINGS.darkMode;
+  applyDarkMode();
+  api('POST', 'settings', { darkMode: SETTINGS.darkMode }).catch(console.error);
+}
+
+const MONTHS_NO = ['Januar','Februar','Mars','April','Mai','Juni','Juli','August','September','Oktober','November','Desember'];
+
+// ── State ─────────────────────────────────────────────────────
+let DATA         = {};        // local cache: DATA[key] = {income, expenses, notes}
+let knownSheets  = [];        // ordered list from API
+let currentSheet = 'MAL';
+
+// ── Auth state ────────────────────────────────────────────────
+let AUTH_MODE    = 'pin';     // 'pin' | 'users'
+let CURRENT_USER = null;      // username when in users mode
+let CURRENT_ROLE = null;      // 'admin' | 'user' when in users mode
+let _currentUserId = null;    // DB id of logged-in user (for change-password)
+let currentOwner = 'alle';
+let currentSearch = '';
+let currentSort  = { col: 'status', dir: 'asc' };
+let editingIncomeIdx  = null;
+let editingExpenseIdx = null;
+let pendingDeleteSheet = null;
+let monthDropdownOpen  = false;
+
+// ── API helper ────────────────────────────────────────────────
+async function api(method, action, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body !== undefined) opts.body = JSON.stringify(body);
+  const res = await fetch('api.php?action=' + action, opts);
+  if (res.status === 401) {
+    // Session expired — show PIN screen again
+    document.getElementById('pin-overlay').classList.remove('hidden');
+    pinBuffer = '';
+    updatePinDots();
+    document.getElementById('pin-error').textContent = 'Sesjonen utløpt – logg inn igjen.';
+    throw new Error('unauthenticated');
+  }
+  return res.json();
+}
+
+function setLoading(on) {
+  document.getElementById('loading-overlay').classList.toggle('hidden', !on);
+}
+
+// ── Credential login ──────────────────────────────────────────
+async function loginWithCredentials(e) {
+  e?.preventDefault();
+  const username = document.getElementById('creds-username').value.trim();
+  const password = document.getElementById('creds-password').value;
+  const errEl    = document.getElementById('creds-error');
+  errEl.textContent = '';
+  if (!username || !password) { errEl.textContent = T('creds_required'); return; }
+  const btn = document.getElementById('creds-submit');
+  btn.disabled = true;
+  try {
+    const res = await fetch('api.php?action=login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      CURRENT_USER = data.username;
+      CURRENT_ROLE = data.role;
+      document.getElementById('pin-overlay').classList.add('hidden');
+      await initApp();
+    } else {
+      errEl.textContent = T('creds_wrong');
+      document.getElementById('creds-password').value = '';
+      document.getElementById('creds-password').focus();
+    }
+  } catch(e) {
+    errEl.textContent = T('creds_wrong');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ── User management ───────────────────────────────────────────
+let _userList = [];
+
+async function loadUsers() {
+  try {
+    _userList = await api('GET', 'users');
+    // Find own user ID for password change
+    const me = _userList.find(u => u.username === CURRENT_USER);
+    if (me) _currentUserId = me.id;
+    renderUserList();
+  } catch(e) { /* not admin or error */ }
+}
+
+function renderUserList() {
+  const el = document.getElementById('cfg-user-list');
+  if (!el) return;
+  if (!_userList.length) {
+    el.innerHTML = `<p style="font-size:13px;color:var(--muted)" data-i18n="no_users_yet">Ingen brukere ennå.</p>`;
+    return;
+  }
+  el.innerHTML = _userList.map(u => `
+    <div class="user-row">
+      <span class="user-name">${escHtml(u.username)}</span>
+      <span class="user-role-badge ${u.role === 'admin' ? 'role-admin' : 'role-user'}">
+        ${u.role === 'admin' ? T('role_admin') : T('role_user')}
+      </span>
+      <span style="font-size:11px;color:var(--muted);flex:1">${u.created || ''}</span>
+      <button class="user-del-btn" onclick="deleteUser(${u.id},'${escHtml(u.username)}')"
+        title="${T('btn_del_user')}" ${u.username === CURRENT_USER ? 'disabled' : ''}>✕</button>
+    </div>`).join('');
+}
+
+async function addUser() {
+  const username = document.getElementById('cfg-user-username').value.trim();
+  const password = document.getElementById('cfg-user-password').value;
+  const role     = document.getElementById('cfg-user-role').value;
+  const msgEl    = document.getElementById('cfg-user-msg');
+  if (!username || password.length < 6) {
+    msgEl.style.color = 'var(--red)'; msgEl.textContent = T('user_pw_too_short'); return;
+  }
+  const res = await api('POST', 'users', { username, password, role });
+  if (res.ok) {
+    document.getElementById('cfg-user-username').value = '';
+    document.getElementById('cfg-user-password').value = '';
+    msgEl.style.color = 'var(--green)'; msgEl.textContent = T('user_added');
+    setTimeout(() => msgEl.textContent = '', 3000);
+    await loadUsers();
+  } else {
+    msgEl.style.color = 'var(--red)'; msgEl.textContent = res.error || T('user_add_error');
+  }
+}
+
+async function deleteUser(id, username) {
+  if (!confirm(T('confirm_del_user').replace('{u}', username))) return;
+  const res = await api('DELETE', 'user&id=' + id, {});
+  if (res.ok) { await loadUsers(); }
+  else         { alert(res.error || T('user_add_error')); }
+}
+
+async function saveMyPassword() {
+  const pw    = document.getElementById('cfg-my-password').value;
+  const msgEl = document.getElementById('cfg-pw-msg');
+  if (pw.length < 6) {
+    msgEl.style.color = 'var(--red)'; msgEl.textContent = T('user_pw_too_short'); return;
+  }
+  const res = await api('POST', 'user_password', { id: _currentUserId, password: pw });
+  if (res.ok) {
+    document.getElementById('cfg-my-password').value = '';
+    msgEl.style.color = 'var(--green)'; msgEl.textContent = T('pw_saved');
+    setTimeout(() => msgEl.textContent = '', 3000);
+  } else {
+    msgEl.style.color = 'var(--red)'; msgEl.textContent = res.error || T('user_add_error');
+  }
+}
+
+async function switchAuthMode() {
+  const newMode = AUTH_MODE === 'pin' ? 'users' : 'pin';
+  if (newMode === 'users' && _userList.length === 0) {
+    alert(T('auth_need_user')); return;
+  }
+  const warn = newMode === 'users' ? T('auth_switch_warn_users') : T('auth_switch_warn_pin');
+  if (!confirm(warn)) return;
+  AUTH_MODE = newMode;
+  await api('POST', 'settings', { auth_mode: newMode });
+  updateAuthSection();
+}
+
+function updateAuthSection() {
+  const isUsers = AUTH_MODE === 'users';
+  const isAdmin = CURRENT_ROLE === 'admin';
+  const lbl = document.getElementById('cfg-auth-mode-label');
+  const btn = document.getElementById('cfg-auth-switch-btn');
+  if (lbl) lbl.textContent = isUsers ? T('auth_mode_users') : T('auth_mode_pin');
+  if (btn) btn.textContent = isUsers ? T('auth_switch_to_pin') : T('auth_switch_to_users');
+  const pinSec  = document.getElementById('cfg-section-pin');
+  const userSec = document.getElementById('cfg-section-users');
+  const pwSec   = document.getElementById('cfg-section-mypassword');
+  if (pinSec)  pinSec.style.display  = isUsers ? 'none' : '';
+  // Show user management in PIN mode (to pre-add users before switching) OR in users mode for admins
+  if (userSec) userSec.style.display = (!isUsers || isAdmin) ? '' : 'none';
+  if (pwSec)   pwSec.style.display   = isUsers ? '' : 'none';
+}
+
+// ── Boot ──────────────────────────────────────────────────────
+initPinLock();
+
+// ── PIN Lock ──────────────────────────────────────────────────
+let pinBuffer = '';
+
+function pinPress(digit) {
+  if (pinBuffer.length >= 12) return;
+  pinBuffer += digit;
+  updatePinDots();
+  // auto-submit only once at least 4 digits have been entered
+  clearTimeout(pinPress._t);
+  if (pinBuffer.length >= 4) {
+    pinPress._t = setTimeout(pinSubmit, 150);
+  }
+}
+
+function pinDelete() {
+  clearTimeout(pinPress._t);
+  pinBuffer = pinBuffer.slice(0, -1);
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+}
+
+function updatePinDots() {
+  // Show 4 dots minimum, expand if PIN is longer
+  const show = Math.max(4, pinBuffer.length + (pinBuffer.length < 4 ? 4 - pinBuffer.length : 0));
+  const dotsEl = document.getElementById('pin-dots');
+  // Rebuild if count changed
+  const target = Math.max(4, pinBuffer.length <= 4 ? 4 : pinBuffer.length + 1);
+  if (dotsEl.children.length !== target) {
+    dotsEl.innerHTML = '';
+    for (let i = 0; i < target; i++) {
+      const d = document.createElement('div');
+      d.className = 'pin-dot';
+      d.id = 'pd' + i;
+      dotsEl.appendChild(d);
+    }
+  }
+  for (let i = 0; i < dotsEl.children.length; i++) {
+    dotsEl.children[i].classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+
+async function pinSubmit() {
+  clearTimeout(pinPress._t);
+  if (!pinBuffer) return;
+  const entered = pinBuffer;
+  try {
+    const res = await api('POST', 'login', { pin: entered });
+    if (res.ok) {
+      document.getElementById('pin-overlay').classList.add('hidden');
+      document.removeEventListener('keydown', pinKeyHandler);
+      await initApp();
+    } else {
+      const box = document.getElementById('pin-box');
+      document.getElementById('pin-error').textContent = 'Feil PIN-kode. Prøv igjen.';
+      box.classList.add('shake');
+      setTimeout(() => box.classList.remove('shake'), 450);
+      pinBuffer = '';
+      updatePinDots();
+    }
+  } catch(e) { if (e.message !== 'unauthenticated') console.error(e); }
+}
+
+async function initPinLock() {
+  document.getElementById('pin-logo').textContent = SETTINGS.title;
+  try {
+    const res = await api('GET', 'check_auth');
+    AUTH_MODE    = res.auth_mode   || 'pin';
+    CURRENT_USER = res.username    || null;
+    CURRENT_ROLE = res.role        || null;
+    if (res.authenticated) {
+      document.getElementById('pin-overlay').classList.add('hidden');
+      await initApp();
+      return;
+    }
+  } catch(e) { /* show login */ }
+
+  if (AUTH_MODE === 'users') {
+    document.getElementById('pin-box').classList.add('hidden');
+    const creds = document.getElementById('pin-box-creds');
+    creds.classList.remove('hidden');
+    document.getElementById('pin-logo-creds').textContent = SETTINGS.title;
+    document.getElementById('creds-sub').textContent = T('creds_login');
+    document.getElementById('creds-submit').textContent = T('creds_login');
+    setTimeout(() => document.getElementById('creds-username').focus(), 100);
+  } else {
+    document.addEventListener('keydown', pinKeyHandler);
+  }
+}
+
+function pinKeyHandler(e) {
+  if (document.getElementById('pin-overlay').classList.contains('hidden')) return;
+  if (e.key >= '0' && e.key <= '9') { clearTimeout(pinPress._t); pinBuffer += e.key; updatePinDots(); if (pinBuffer.length >= 4) pinPress._t = setTimeout(pinSubmit, 150); }
+  else if (e.key === 'Backspace') { pinDelete(); }
+  else if (e.key === 'Enter')     { clearTimeout(pinPress._t); pinSubmit(); }
+}
+
+// ── App initialisation ────────────────────────────────────────
+async function initApp() {
+  setLoading(true);
+  try {
+    const srv = await api('GET', 'settings');
+    Object.assign(SETTINGS, srv);
+    document.getElementById('pin-logo').textContent = SETTINGS.title;
+    applyLang();     // apply saved language immediately after settings load
+    applyDarkMode(); // apply saved dark mode immediately
+
+    knownSheets = await api('GET', 'sheets');
+
+    const months = knownSheets.filter(k => k !== 'MAL');
+    const startKey = months.length > 0 ? months[months.length - 1] : 'MAL';
+    currentSheet = startKey;
+    await loadSheetData(startKey);
+
+    applySettings();
+    renderTabs();
+    render();
+    document.getElementById('notes-field').value = DATA[startKey]?.notes || '';
+    document.getElementById('permanent-notes-field').value = SETTINGS.permanentNotes || '';
+    document.getElementById('mal-notice').classList.toggle('hidden', startKey !== 'MAL');
+  } catch(e) { console.error('initApp error', e); }
+  finally { setLoading(false); }
+}
+
+// ── Month key helpers ─────────────────────────────────────────
+function keyToDate(key) {
+  const [mm, yyyy] = key.split('-');
+  return new Date(parseInt(yyyy), parseInt(mm) - 1, 1);
+}
+function keyToLabel(key) {
+  const [mm, yyyy] = key.split('-');
+  return MONTHS_NO[parseInt(mm) - 1] + ' ' + yyyy;
+}
+function sortedMonthKeys() {
+  return knownSheets.filter(k => k !== 'MAL');
+}
+
+// ── Month navigator ───────────────────────────────────────────
+function renderTabs() {
+  const nav = document.getElementById('month-nav');
+  nav.innerHTML = '';
+  const months = sortedMonthKeys();
+  const isMal  = currentSheet === 'MAL';
+  const curIdx = months.indexOf(currentSheet);
+
+  // MAL button
+  const malBtn = document.createElement('button');
+  malBtn.className = 'mal-btn' + (isMal ? ' active' : '');
+  malBtn.innerHTML = `<span style="margin-right:4px;font-style:normal">📋</span>${T('tab_mal')}`;
+  malBtn.onclick = () => loadSheet('MAL');
+  nav.appendChild(malBtn);
+
+  // Centre: ‹ [Month ▾] ›
+  const centre = document.createElement('div');
+  centre.className = 'month-picker-center';
+
+  const prevBtn = document.createElement('button');
+  prevBtn.className = 'nav-arrow';
+  prevBtn.innerHTML = '‹';
+  prevBtn.title = 'Forrige måned';
+  prevBtn.disabled = isMal || curIdx <= 0;
+  prevBtn.onclick = () => { if (curIdx > 0) loadSheet(months[curIdx - 1]); };
+  centre.appendChild(prevBtn);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'month-picker-wrap';
+
+  const curBtn = document.createElement('button');
+  curBtn.className = 'month-current-btn' + (monthDropdownOpen ? ' open' : '');
+  curBtn.id = 'month-current-btn';
+  const curLabel = isMal ? T('tab_mal') : (months.length ? keyToLabel(currentSheet) : '–');
+  curBtn.innerHTML = `<span>${curLabel}</span>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
+  curBtn.onclick = (e) => { e.stopPropagation(); toggleMonthDropdown(); };
+  wrap.appendChild(curBtn);
+
+  const panel = document.createElement('div');
+  panel.className = 'month-dropdown-panel' + (monthDropdownOpen ? '' : ' hidden');
+  panel.id = 'month-dropdown-panel';
+
+  if (months.length === 0) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'padding:14px 20px;font-size:13px;color:rgba(255,255,255,0.4)';
+    empty.textContent = 'Ingen måneder ennå';
+    panel.appendChild(empty);
+  } else {
+    const byYear = {};
+    months.forEach(k => { const y = k.split('-')[1]; if (!byYear[y]) byYear[y] = []; byYear[y].push(k); });
+    Object.keys(byYear).sort((a,b) => b - a).forEach(year => {
+      const yl = document.createElement('div');
+      yl.className = 'month-year-label';
+      yl.textContent = year;
+      panel.appendChild(yl);
+      [...byYear[year]].reverse().forEach(key => {
+        const item = document.createElement('button');
+        item.className = 'month-item' + (currentSheet === key ? ' active' : '');
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = keyToLabel(key);
+        const delBtn = document.createElement('button');
+        delBtn.className = 'month-item-del';
+        delBtn.innerHTML = '✕';
+        delBtn.title = 'Slett ' + keyToLabel(key);
+        delBtn.onclick = (e) => { e.stopPropagation(); closeMonthDropdown(); openDeleteMonthModal(key); };
+        item.appendChild(nameSpan);
+        item.appendChild(delBtn);
+        item.onclick = () => { closeMonthDropdown(); loadSheet(key); };
+        panel.appendChild(item);
+      });
+    });
+  }
+
+  wrap.appendChild(panel);
+  centre.appendChild(wrap);
+
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'nav-arrow';
+  nextBtn.innerHTML = '›';
+  nextBtn.title = 'Neste måned';
+  nextBtn.disabled = isMal || curIdx < 0 || curIdx >= months.length - 1;
+  nextBtn.onclick = () => { if (curIdx < months.length - 1) loadSheet(months[curIdx + 1]); };
+  centre.appendChild(nextBtn);
+  nav.appendChild(centre);
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'btn-new-month';
+  addBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> ${T('btn_new_month')}`;
+  addBtn.onclick = openNewMonthModal;
+  nav.appendChild(addBtn);
+}
+
+function toggleMonthDropdown() {
+  monthDropdownOpen = !monthDropdownOpen;
+  renderTabs();
+  if (monthDropdownOpen) {
+    setTimeout(() => {
+      const active = document.getElementById('month-dropdown-panel')?.querySelector('.month-item.active');
+      if (active) active.scrollIntoView({ block: 'nearest' });
+    }, 30);
+  }
+}
+function closeMonthDropdown() {
+  if (monthDropdownOpen) { monthDropdownOpen = false; renderTabs(); }
+}
+document.addEventListener('click', e => {
+  if (monthDropdownOpen && !e.target.closest('.month-picker-wrap')) closeMonthDropdown();
+});
+
+// ── Load sheet ────────────────────────────────────────────────
+async function loadSheet(key) {
+  currentSheet = key;
+  renderTabs();
+  document.getElementById('mal-notice').classList.toggle('hidden', key !== 'MAL');
+  if (!DATA[key]) {
+    setLoading(true);
+    try { await loadSheetData(key); } finally { setLoading(false); }
+  }
+  document.getElementById('notes-field').value = DATA[key]?.notes || '';
+  render();
+}
+
+async function loadSheetData(key) {
+  const d = await api('GET', 'sheet&key=' + encodeURIComponent(key));
+  DATA[key] = normaliseSheetData(d);
+}
+
+// ── New month ─────────────────────────────────────────────────
+function openNewMonthModal() {
+  const months = sortedMonthKeys();
+  let suggest;
+  if (months.length > 0) {
+    const last = keyToDate(months[months.length - 1]);
+    suggest = new Date(last.getFullYear(), last.getMonth() + 1, 1);
+  } else { suggest = new Date(); }
+  document.getElementById('nm-month').value = String(suggest.getMonth() + 1).padStart(2, '0');
+  document.getElementById('nm-year').value  = suggest.getFullYear();
+  document.getElementById('nm-error').style.display = 'none';
+  openModal('newmonth-overlay');
+  setTimeout(() => document.getElementById('nm-year').focus(), 50);
+}
+
+async function createNewMonth() {
+  const mm   = document.getElementById('nm-month').value;
+  const yyyy = parseInt(document.getElementById('nm-year').value);
+  const err  = document.getElementById('nm-error');
+  if (!yyyy || yyyy < 2020 || yyyy > 2099) {
+    err.textContent = 'Oppgi et gyldig årstall (2020–2099).'; err.style.display = 'block'; return;
+  }
+  const key = mm + '-' + yyyy;
+  if (knownSheets.includes(key)) {
+    err.textContent = keyToLabel(key) + ' finnes allerede.'; err.style.display = 'block'; return;
+  }
+  setLoading(true);
+  try {
+    await api('POST', 'sheet', { key, copy_from: 'MAL' });
+    await loadSheetData(key);
+    knownSheets = await api('GET', 'sheets');
+    closeModal('newmonth-overlay');
+    currentSheet = key;
+    renderTabs();
+    document.getElementById('mal-notice').classList.add('hidden');
+    document.getElementById('notes-field').value = '';
+    render();
+  } finally { setLoading(false); }
+}
+
+// ── Delete month ──────────────────────────────────────────────
+function openDeleteMonthModal(key) {
+  pendingDeleteSheet = key;
+  document.getElementById('delete-month-name').textContent = keyToLabel(key);
+  openModal('deletemonth-overlay');
+}
+
+async function confirmDeleteMonth() {
+  if (!pendingDeleteSheet) return;
+  setLoading(true);
+  try {
+    await api('DELETE', 'sheet&key=' + encodeURIComponent(pendingDeleteSheet));
+    delete DATA[pendingDeleteSheet];
+    knownSheets = await api('GET', 'sheets');
+    monthDropdownOpen = false;
+    closeModal('deletemonth-overlay');
+    const months = sortedMonthKeys();
+    await loadSheet(months.length > 0 ? months[months.length - 1] : 'MAL');
+    pendingDeleteSheet = null;
+  } finally { setLoading(false); }
+}
+
+// ── Apply MAL to current month ────────────────────────────────
+async function applyMalToCurrentMonth() {
+  const now   = new Date();
+  const mm    = String(now.getMonth() + 1).padStart(2, '0');
+  const yyyy  = now.getFullYear();
+  const key   = mm + '-' + yyyy;
+  const MONTHS = ['Januar','Februar','Mars','April','Mai','Juni','Juli','August','September','Oktober','November','Desember'];
+  const monthLabel = MONTHS[now.getMonth()] + ' ' + yyyy;
+
+  const exists = knownSheets.includes(key);
+  if (exists) {
+    const msg = T('confirm_apply_mal').replace('{m}', monthLabel);
+    if (!confirm(msg)) return;
+  }
+
+  setLoading(true);
+  try {
+    if (exists) {
+      await api('POST', 'apply_mal', { key });
+      delete DATA[key]; // invalidate cache
+    } else {
+      await api('POST', 'sheet', { key, copy_from: 'MAL' });
+      knownSheets = await api('GET', 'sheets');
+    }
+    await loadSheet(key);
+  } finally { setLoading(false); }
+}
+
+// ── Notes ─────────────────────────────────────────────────────
+let _notesSaveTimer = null;
+function saveNotes() {
+  if (!DATA[currentSheet]) return;
+  DATA[currentSheet].notes = document.getElementById('notes-field').value;
+  clearTimeout(_notesSaveTimer);
+  _notesSaveTimer = setTimeout(() => {
+    api('POST', 'notes', { key: currentSheet, notes: DATA[currentSheet].notes }).catch(console.error);
+  }, 800);
+}
+
+let _permNotesSaveTimer = null;
+function savePermanentNotes() {
+  SETTINGS.permanentNotes = document.getElementById('permanent-notes-field').value;
+  clearTimeout(_permNotesSaveTimer);
+  _permNotesSaveTimer = setTimeout(() => {
+    api('POST', 'settings', { permanentNotes: SETTINGS.permanentNotes }).catch(console.error);
+  }, 800);
+}
+
+// ── Formatting ────────────────────────────────────────────────
+function currencyFmt(num, prefix) {
+  const c = CURRENCIES[SETTINGS.currency] || CURRENCIES.NOK;
+  return c.pos === 'before' ? c.symbol + '\u00a0' + num : num + '\u00a0' + c.symbol;
+}
+function fmt(n) {
+  if (n === null || n === undefined) return '–';
+  return currencyFmt(new Intl.NumberFormat('nb-NO').format(n));
+}
+function varianceClass(v) { if (v === null || v === undefined) return ''; return v > 0 ? 'pos' : v < 0 ? 'neg' : 'zero'; }
+function varianceFmt(v) {
+  if (v === null || v === undefined) return '–';
+  return currencyFmt((v > 0 ? '+' : '') + new Intl.NumberFormat('nb-NO').format(v));
+}
+function typeBadge(t) {
+  const map = { Fast:'fast', Variabel:'variabel', Stipulert:'stipulert', Midlertidig:'midlertidig' };
+  return `<span class="badge badge-${map[t]||'na'}">${t}</span>`;
+}
+function statusBadge(s) {
+  if (s === SETTINGS.paidStatus) return `<span class="badge badge-paid">${escHtml(s)}</span>`;
+  const isUnpaid = s === SETTINGS.statuses.find(x => x !== SETTINGS.paidStatus);
+  if (isUnpaid) return `<span class="badge badge-unpaid">${escHtml(s)}</span>`;
+  return `<span class="badge badge-na">${escHtml(s)}</span>`;
+}
+function ownerSpan(o) {
+  const found = SETTINGS.owners.find(ow => ow.name === o);
+  const color = found ? found.color : '#718096';
+  return `<span style="font-weight:600;color:${color}">${escHtml(o)}</span>`;
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function actualDisplay(val) {
+  if (val === null || val === undefined) return '<span class="actual-placeholder">Klikk for å legge inn</span>';
+  return `<span>${fmt(val)}</span>`;
+}
+
+// ── Sort & Filter ─────────────────────────────────────────────
+function sortAndFilter(expenses) {
+  const q = currentSearch.toLowerCase().trim();
+  let arr = expenses.map((r, i) => ({ ...r, _i: i }));
+  if (q) {
+    arr = arr.filter(r =>
+      r.name.toLowerCase().includes(q) ||
+      (r.note||'').toLowerCase().includes(q) ||
+      r.type.toLowerCase().includes(q) ||
+      r.status.toLowerCase().includes(q) ||
+      r.owner.toLowerCase().includes(q)
+    );
+  }
+  const { col, dir } = currentSort;
+  const d = dir === 'asc' ? 1 : -1;
+  arr.sort((a, b) => {
+    let cmp = 0;
+    if (col === 'name')     cmp = a.name.localeCompare(b.name, 'no-NO');
+    else if (col === 'budgeted') cmp = a.budgeted - b.budgeted;
+    else if (col === 'actual')   cmp = (a.actual ?? -Infinity) - (b.actual ?? -Infinity);
+    else if (col === 'type')     cmp = a.type.localeCompare(b.type, 'no-NO');
+    else if (col === 'status') {
+      const sp = s => {
+        if (s === SETTINGS.paidStatus) return 1;
+        const nonPaid = SETTINGS.statuses.filter(x => x !== SETTINGS.paidStatus);
+        return nonPaid.indexOf(s) === 0 ? 0 : 2;
+      };
+      cmp = sp(a.status) - sp(b.status);
+    }
+    else if (col === 'owner') cmp = a.owner.localeCompare(b.owner, 'no-NO');
+    cmp *= d;
+    if (cmp === 0) {
+      const ap = a.status === SETTINGS.paidStatus ? 1 : 0;
+      const bp = b.status === SETTINGS.paidStatus ? 1 : 0;
+      cmp = ap - bp;
+    }
+    return cmp;
+  });
+  return arr;
+}
+
+function highlightMatch(text) {
+  const q = currentSearch.trim();
+  if (!q) return escHtml(text);
+  const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+  return escHtml(text).replace(re, '<mark>$1</mark>');
+}
+
+function setSearch(val) {
+  currentSearch = val;
+  document.getElementById('search-clear')?.classList.toggle('hidden', !val);
+  render();
+}
+function clearSearch() {
+  currentSearch = '';
+  const inp = document.getElementById('expense-search');
+  if (inp) inp.value = '';
+  document.getElementById('search-clear')?.classList.add('hidden');
+  render();
+}
+function setSort(val) {
+  const [col, dir] = val.split('-');
+  currentSort = { col, dir };
+  render();
+}
+
+// ── Render ────────────────────────────────────────────────────
+function render() {
+  const d = DATA[currentSheet];
+  if (!d) return;
+
+  // Income
+  const incomeBody = document.getElementById('income-body');
+  incomeBody.innerHTML = '';
+  let totalIncomeBudget = 0, totalIncomeActual = 0;
+  d.income.forEach((r, idx) => {
+    totalIncomeBudget += r.budgeted;
+    totalIncomeActual += r.actual ?? 0;
+    const v = (r.actual ?? r.budgeted) - r.budgeted;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${escHtml(r.name)}</td>
+      <td class="num">${fmt(r.budgeted)}</td>
+      <td class="num actual-cell" title="${T('click_edit')}" onclick="startActualEdit(this,'income',${idx})">${actualDisplay(r.actual)}</td>
+      <td class="num ${varianceClass(v)}">${varianceFmt(v)}</td>
+      <td><div class="row-actions">
+        <button class="btn-icon" onclick="openIncomeModal(${idx})">✏️</button>
+        <button class="btn-icon del" onclick="deleteIncome(${idx})">🗑</button>
+      </div></td>`;
+    incomeBody.appendChild(tr);
+  });
+  const iTotalRow = document.createElement('tr');
+  iTotalRow.className = 'total-row';
+  const incVar = totalIncomeActual - totalIncomeBudget;
+  iTotalRow.innerHTML = `<td>${T('sum_income')}</td><td class="num">${fmt(totalIncomeBudget)}</td><td class="num">${fmt(totalIncomeActual)}</td><td class="num ${varianceClass(incVar)}">${varianceFmt(incVar)}</td><td></td>`;
+  incomeBody.appendChild(iTotalRow);
+
+  // Expenses
+  const defaultUnpaid = SETTINGS.statuses.find(s => s !== SETTINGS.paidStatus) || '';
+  const display = sortAndFilter(d.expenses);
+  const expenseBody = document.getElementById('expense-body');
+  expenseBody.innerHTML = '';
+  let totalBudget = 0, totalActual = 0;
+  d.expenses.forEach(r => { totalBudget += r.budgeted; if (r.actual !== null) totalActual += r.actual; });
+  display.forEach(r => {
+    const idx = r._i;
+    const hidden = currentOwner !== 'alle' && r.owner !== currentOwner;
+    const v = r.actual !== null ? r.budgeted - r.actual : null;
+    const canToggle = r.status === SETTINGS.paidStatus || r.status === defaultUnpaid;
+    const tr = document.createElement('tr');
+    if (hidden) tr.classList.add('hidden');
+    if (r.status === SETTINGS.paidStatus) tr.classList.add('paid-row');
+    tr.innerHTML = `
+      <td>${highlightMatch(r.name)}</td>
+      <td class="num">${fmt(r.budgeted)}</td>
+      <td class="num actual-cell" title="${T('click_edit')}" onclick="startActualEdit(this,'expense',${idx})">${actualDisplay(r.actual)}</td>
+      <td class="num ${varianceClass(v)}">${varianceFmt(v)}</td>
+      <td>${typeBadge(r.type)}</td>
+      <td class="status-cell${canToggle?' toggleable':''}" title="${canToggle?T('click_toggle'):''}" onclick="${canToggle?'toggleStatus('+idx+')':''}">${statusBadge(r.status)}</td>
+      <td>${ownerSpan(r.owner)}</td>
+      <td class="note">${highlightMatch(r.note||'')}</td>
+      <td><div class="row-actions">
+        <button class="btn-icon" onclick="openExpenseModal(${idx})">✏️</button>
+        <button class="btn-icon del" onclick="deleteExpense(${idx})">🗑</button>
+      </div></td>`;
+    expenseBody.appendChild(tr);
+  });
+  const eTotalRow = document.createElement('tr');
+  eTotalRow.className = 'total-row';
+  eTotalRow.innerHTML = `<td>${T('sum_expenses')}</td><td class="num">${fmt(totalBudget)}</td><td class="num">${fmt(totalActual)}</td><td class="num ${varianceClass(totalBudget-totalActual)}">${varianceFmt(totalBudget-totalActual)}</td><td colspan="5"></td>`;
+  expenseBody.appendChild(eTotalRow);
+
+  // Search count
+  const vis = currentOwner==='alle' ? display.length : display.filter(r=>r.owner===currentOwner).length;
+  const tot = currentOwner==='alle' ? d.expenses.length : d.expenses.filter(r=>r.owner===currentOwner).length;
+  const countEl = document.getElementById('search-count');
+  countEl.textContent = currentSearch
+    ? (vis === 0 ? T('no_results') : `${vis} ${T('search_of')} ${tot} ${T('search_items')}`)
+    : '';
+
+  // Balance
+  const paid    = d.expenses.filter(e=>e.status===SETTINGS.paidStatus&&e.actual!==null).reduce((s,e)=>s+e.actual,0);
+  const unpaid  = d.expenses.filter(e=>e.status!==SETTINGS.paidStatus).reduce((s,e)=>s+e.budgeted,0);
+  const leftover = totalIncomeActual - totalActual;
+  document.getElementById('b-paid').textContent   = fmt(paid);
+  document.getElementById('b-unpaid').textContent = fmt(unpaid);
+  document.getElementById('b-leftover').textContent = fmt(leftover);
+  document.getElementById('b-leftover').className  = 'value ' + (leftover >= 0 ? 'pos' : 'neg');
+
+  const ownerRows = document.getElementById('b-owner-rows');
+  ownerRows.innerHTML = '';
+  let ownerTotal = 0;
+  SETTINGS.owners.forEach(ow => {
+    const owBudget = d.expenses.filter(e=>e.owner===ow.name).reduce((s,e)=>s+e.budgeted,0);
+    ownerTotal += owBudget;
+    const row = document.createElement('div');
+    row.className = 'balance-item';
+    row.innerHTML = `<span class="label">${escHtml(ow.name)} – ${T('b_owner_budget')}</span><span class="value" style="color:${ow.color}">${fmt(owBudget)}</span>`;
+    ownerRows.appendChild(row);
+  });
+  document.getElementById('b-owner-total').textContent = fmt(ownerTotal);
+
+  // Cards
+  document.getElementById('s-income').textContent     = fmt(totalIncomeBudget);
+  document.getElementById('s-income-sub').textContent = `${T('th_actual')}: ${fmt(totalIncomeActual)}`;
+  document.getElementById('s-budget').textContent     = fmt(totalBudget);
+  document.getElementById('s-budget-sub').textContent = `${d.expenses.length} ${T('search_items')}`;
+  document.getElementById('s-actual').textContent     = fmt(totalActual);
+  const paidCount = d.expenses.filter(e=>e.status===SETTINGS.paidStatus).length;
+  document.getElementById('s-actual-sub').textContent = `${paidCount} ${T('paid_count_of')} ${d.expenses.length} ${T('paid_count_paid')}`;
+  document.getElementById('s-balance').textContent    = fmt(leftover);
+  document.getElementById('s-balance-sub').textContent = `${T('card_income')} – ${T('card_actual').toLowerCase()}`;
+  const pct = totalBudget > 0 ? Math.min(100, Math.round(totalActual / totalBudget * 100)) : 0;
+  document.getElementById('s-bar').style.width = pct + '%';
+
+  // Sort select labels
+  const sortSel = document.getElementById('sort-select');
+  if (sortSel) {
+    const opts = ['sort_status','sort_name_asc','sort_name_desc','sort_budget_desc','sort_budget_asc','sort_owner','sort_type'];
+    sortSel.querySelectorAll('option').forEach((o, i) => { o.textContent = T(opts[i]); });
+  }
+  // Search placeholder
+  const si = document.getElementById('expense-search');
+  if (si && !si.placeholder) si.placeholder = T('search_ph');
+}
+
+// ── Owner filter ──────────────────────────────────────────────
+function renderOwnerFilter() {
+  const el = document.getElementById('owner-filter');
+  el.innerHTML = `<span class="filter-label">${T('filter_owner')}</span>`;
+  const allBtn = document.createElement('button');
+  allBtn.className = 'filter-btn' + (currentOwner==='alle' ? ' active' : '');
+  allBtn.textContent = T('filter_all');
+  allBtn.onclick = () => setOwner('alle');
+  el.appendChild(allBtn);
+  SETTINGS.owners.forEach(ow => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (currentOwner===ow.name ? ' active' : '');
+    btn.textContent = ow.name;
+    btn.onclick = () => setOwner(ow.name);
+    el.appendChild(btn);
+  });
+}
+function setOwner(owner) { currentOwner = owner; renderOwnerFilter(); render(); }
+
+// ── Modal helpers ─────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeOnBackdrop(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
+
+// ── Income CRUD ───────────────────────────────────────────────
+function openIncomeModal(idx) {
+  editingIncomeIdx = idx ?? null;
+  const isEdit = idx !== undefined && idx !== null;
+  document.getElementById('income-modal-title').textContent = isEdit ? 'Rediger inntekt' : 'Legg til inntekt';
+  if (isEdit) {
+    const r = DATA[currentSheet].income[idx];
+    document.getElementById('i-name').value     = r.name;
+    document.getElementById('i-budgeted').value = r.budgeted;
+    document.getElementById('i-actual').value   = r.actual ?? '';
+  } else {
+    document.getElementById('i-name').value = '';
+    document.getElementById('i-budgeted').value = '';
+    document.getElementById('i-actual').value = '';
+  }
+  openModal('income-overlay');
+  setTimeout(() => document.getElementById('i-name').focus(), 50);
+}
+
+async function saveIncome() {
+  const name = document.getElementById('i-name').value.trim();
+  if (!name) { document.getElementById('i-name').focus(); return; }
+  const budgeted = parseFloat(document.getElementById('i-budgeted').value) || 0;
+  const actualRaw = document.getElementById('i-actual').value.trim();
+  const actual = actualRaw === '' ? null : parseFloat(actualRaw);
+  const arr = DATA[currentSheet].income;
+  if (editingIncomeIdx !== null) {
+    const id = arr[editingIncomeIdx].id;
+    await api('PUT', 'income&id=' + id, { name, budgeted, actual });
+    arr[editingIncomeIdx] = { ...arr[editingIncomeIdx], name, budgeted, actual };
+  } else {
+    const res = await api('POST', 'income', { sheet_key: currentSheet, name, budgeted, actual });
+    arr.push({ id: res.id, name, budgeted, actual });
+  }
+  closeModal('income-overlay');
+  render();
+}
+
+async function deleteIncome(idx) {
+  if (!confirm(T('confirm_del_income'))) return;
+  const id = DATA[currentSheet].income[idx].id;
+  await api('DELETE', 'income&id=' + id);
+  DATA[currentSheet].income.splice(idx, 1);
+  render();
+}
+
+// ── Expense CRUD ──────────────────────────────────────────────
+function populateExpenseDropdowns(r) {
+  const sel = (id, arr, val) => {
+    const el = document.getElementById(id);
+    el.innerHTML = arr.map(v => `<option${v===val?' selected':''}>${escHtml(v)}</option>`).join('');
+  };
+  const defaultStatus = SETTINGS.statuses.find(s => s !== SETTINGS.paidStatus) || SETTINGS.statuses[0];
+  const defaultOwner  = SETTINGS.owners[0]?.name || '';
+  sel('e-type',   SETTINGS.types,                   r ? r.type   : SETTINGS.types[0]);
+  sel('e-status', SETTINGS.statuses,                r ? r.status : defaultStatus);
+  sel('e-owner',  SETTINGS.owners.map(o => o.name), r ? r.owner  : defaultOwner);
+}
+
+function openExpenseModal(idx) {
+  editingExpenseIdx = idx ?? null;
+  const isEdit = idx !== undefined && idx !== null;
+  document.getElementById('expense-modal-title').textContent = isEdit ? 'Rediger utgift' : 'Legg til utgift';
+  if (isEdit) {
+    const r = DATA[currentSheet].expenses[idx];
+    populateExpenseDropdowns(r);
+    document.getElementById('e-name').value     = r.name;
+    document.getElementById('e-budgeted').value = r.budgeted;
+    document.getElementById('e-actual').value   = r.actual ?? '';
+    document.getElementById('e-note').value     = r.note || '';
+  } else {
+    populateExpenseDropdowns(null);
+    document.getElementById('e-name').value = '';
+    document.getElementById('e-budgeted').value = '';
+    document.getElementById('e-actual').value = '';
+    document.getElementById('e-note').value = '';
+  }
+  openModal('expense-overlay');
+  setTimeout(() => document.getElementById('e-name').focus(), 50);
+}
+
+async function saveExpense() {
+  const name = document.getElementById('e-name').value.trim();
+  if (!name) { document.getElementById('e-name').focus(); return; }
+  const budgeted = parseFloat(document.getElementById('e-budgeted').value) || 0;
+  const actualRaw = document.getElementById('e-actual').value.trim();
+  const actual = actualRaw === '' ? null : parseFloat(actualRaw);
+  const row = {
+    name, budgeted, actual,
+    type:   document.getElementById('e-type').value,
+    status: document.getElementById('e-status').value,
+    owner:  document.getElementById('e-owner').value,
+    note:   document.getElementById('e-note').value.trim(),
+  };
+  const arr = DATA[currentSheet].expenses;
+  if (editingExpenseIdx !== null) {
+    const id = arr[editingExpenseIdx].id;
+    await api('PUT', 'expense&id=' + id, row);
+    arr[editingExpenseIdx] = { ...arr[editingExpenseIdx], ...row };
+  } else {
+    const res = await api('POST', 'expense', { sheet_key: currentSheet, ...row });
+    arr.push({ id: res.id, ...row });
+  }
+  closeModal('expense-overlay');
+  render();
+}
+
+async function deleteExpense(idx) {
+  if (!confirm(T('confirm_del_expense'))) return;
+  const id = DATA[currentSheet].expenses[idx].id;
+  await api('DELETE', 'expense&id=' + id);
+  DATA[currentSheet].expenses.splice(idx, 1);
+  render();
+}
+
+// ── Inline actual editing ─────────────────────────────────────
+function startActualEdit(cell, type, idx) {
+  if (cell.classList.contains('editing')) return;
+  cell.classList.add('editing');
+  const r = type === 'income' ? DATA[currentSheet].income[idx] : DATA[currentSheet].expenses[idx];
+  cell.innerHTML = `<input class="inline-input" type="number" value="${r.actual ?? ''}" placeholder="0">`;
+  const input = cell.querySelector('input');
+  input.focus(); input.select();
+  input.addEventListener('blur', () => commitActualEdit(cell, input, type, idx));
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      cell.classList.remove('editing');
+      const rec = type === 'income' ? DATA[currentSheet].income[idx] : DATA[currentSheet].expenses[idx];
+      cell.innerHTML = actualDisplay(rec.actual);
+    }
+  });
+}
+
+function commitActualEdit(cell, input, type, idx) {
+  cell.classList.remove('editing');
+  const raw = input.value.trim();
+  const val = raw === '' ? null : parseFloat(raw);
+  const arr = type === 'income' ? DATA[currentSheet].income : DATA[currentSheet].expenses;
+  arr[idx].actual = isNaN(val) ? null : val;
+  const id = arr[idx].id;
+  // Fire-and-forget to API
+  api('PUT', type==='income' ? 'income&id='+id : 'expense&id='+id, arr[idx]).catch(console.error);
+  render();
+}
+
+// ── Status toggle ─────────────────────────────────────────────
+async function toggleStatus(idx) {
+  const r = DATA[currentSheet].expenses[idx];
+  const unpaid = SETTINGS.statuses.find(s => s !== SETTINGS.paidStatus) || 'Ikke betalt';
+  const newStatus = r.status === SETTINGS.paidStatus ? unpaid : SETTINGS.paidStatus;
+  DATA[currentSheet].expenses[idx].status = newStatus;
+  render(); // optimistic
+  api('PUT', 'expense&id=' + r.id, { ...r, status: newStatus }).catch(console.error);
+}
+
+// ── Type / Status localisation ────────────────────────────────
+// Each default type/status has a canonical index (its position in the language
+// arrays). We use this to translate stored values to whatever language is active,
+// regardless of which language they were originally saved in.
+function _canonicalIdx(val, key) {
+  for (const l of Object.keys(STRINGS)) {
+    const arr = STRINGS[l][key];
+    if (!arr) continue;
+    const i = arr.indexOf(val);
+    if (i >= 0) return i;
+  }
+  return -1; // custom / unknown value → leave as-is
+}
+function localiseType(val) {
+  const i = _canonicalIdx(val, 'defaultTypes');
+  return (i >= 0 && STRINGS[SETTINGS.lang]?.defaultTypes?.[i]) ? STRINGS[SETTINGS.lang].defaultTypes[i] : val;
+}
+function localiseStatus(val) {
+  const i = _canonicalIdx(val, 'defaultStatuses');
+  return (i >= 0 && STRINGS[SETTINGS.lang]?.defaultStatuses?.[i]) ? STRINGS[SETTINGS.lang].defaultStatuses[i] : val;
+}
+function normaliseSheetData(d) {
+  // Translate all type/status strings in a sheet to the current language
+  (d.expenses || []).forEach(r => {
+    r.type   = localiseType(r.type   || '');
+    r.status = localiseStatus(r.status || '');
+  });
+  return d;
+}
+
+// ── Language ──────────────────────────────────────────────────
+function applyLang() {
+  const lang = SETTINGS.lang || 'no';
+  const sel = document.getElementById('lang-select');
+  if (sel) sel.value = lang;
+  // Update all data-i18n text nodes
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
+  // Update placeholders
+  const phMap = {
+    'expense-search':        'search_ph',
+    'notes-field':           'ph_month_notes',
+    'permanent-notes-field': 'ph_perm_notes',
+    'cfg-footer':            'ph_footer',
+    'cfg-owner-input':       'ph_owner',
+    'cfg-type-input':        'ph_type',
+    'cfg-status-input':      'ph_status',
+    'cfg-pin':               'ph_pin',
+    'e-note':                'ph_optional',
+  };
+  Object.entries(phMap).forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el) el.placeholder = T(key);
+  });
+}
+
+function setLang(lang) {
+  // Auto-translate types/statuses if they still match any language's defaults
+  const allLangs = Object.keys(STRINGS);
+  const matchedLang = allLangs.find(l => {
+    const s = STRINGS[l];
+    if (!s.defaultTypes || !s.defaultStatuses) return false;
+    const typesMatch = JSON.stringify(SETTINGS.types) === JSON.stringify(s.defaultTypes);
+    const statusesMatch = JSON.stringify(SETTINGS.statuses) === JSON.stringify(s.defaultStatuses);
+    return typesMatch && statusesMatch;
+  });
+  if (matchedLang && STRINGS[lang]?.defaultTypes) {
+    // Find which index the paidStatus is at so we can map it to the new language
+    const paidIdx = SETTINGS.statuses.indexOf(SETTINGS.paidStatus);
+    SETTINGS.types    = [...STRINGS[lang].defaultTypes];
+    SETTINGS.statuses = [...STRINGS[lang].defaultStatuses];
+    SETTINGS.paidStatus = paidIdx >= 0
+      ? SETTINGS.statuses[paidIdx]
+      : STRINGS[lang].defaultPaidStatus;
+  }
+
+  SETTINGS.lang = lang;
+  // Re-translate all cached sheet data to the new language
+  Object.values(DATA).forEach(d => normaliseSheetData(d));
+  applyLang();
+  renderOwnerFilter();
+  renderTabs();
+  render();
+  api('POST', 'settings', SETTINGS).catch(console.error);
+}
+
+// ── Settings panel ────────────────────────────────────────────
+function openSettings() {
+  document.getElementById('cfg-title').value    = SETTINGS.title;
+  document.getElementById('cfg-subtitle').value = SETTINGS.subtitle;
+  document.getElementById('cfg-footer').value   = SETTINGS.footer;
+  document.getElementById('cfg-currency').value = SETTINGS.currency || 'NOK';
+  renderSettingsTags();
+  updateAuthSection();
+  loadUsers(); // load user list in both pin and users mode
+  document.getElementById('settings-panel').classList.add('open');
+  document.getElementById('settings-backdrop').classList.add('open');
+}
+function closeSettings() {
+  document.getElementById('settings-panel').classList.remove('open');
+  document.getElementById('settings-backdrop').classList.remove('open');
+}
+
+function renderSettingsTags() {
+  const ownersEl = document.getElementById('cfg-owners');
+  ownersEl.innerHTML = '';
+  SETTINGS.owners.forEach((ow, i) => {
+    const tag = document.createElement('div');
+    tag.className = 'tag';
+    tag.innerHTML = `
+      <span class="owner-swatch" style="background:${ow.color}"></span>
+      <span class="tag-name">${escHtml(ow.name)}</span>
+      <input type="color" class="color-pick" value="${ow.color}" title="Farge" onchange="SETTINGS.owners[${i}].color=this.value;renderSettingsTags();applySettings()">
+      <button class="tag-remove" title="Fjern" onclick="removeOwner(${i})">✕</button>`;
+    ownersEl.appendChild(tag);
+  });
+  const typesEl = document.getElementById('cfg-types');
+  typesEl.innerHTML = '';
+  SETTINGS.types.forEach((t, i) => {
+    const tag = document.createElement('div');
+    tag.className = 'tag';
+    tag.innerHTML = `<span class="tag-name">${escHtml(t)}</span><button class="tag-remove" title="Fjern" onclick="removeType(${i})">✕</button>`;
+    typesEl.appendChild(tag);
+  });
+  const statusesEl = document.getElementById('cfg-statuses');
+  statusesEl.innerHTML = '';
+  SETTINGS.statuses.forEach((s, i) => {
+    const isPaid = s === SETTINGS.paidStatus;
+    const tag = document.createElement('div');
+    tag.className = 'tag' + (isPaid ? ' paid-tag' : '');
+    tag.innerHTML = `
+      <span class="tag-name">${escHtml(s)}</span>
+      <button class="tag-paid-btn${isPaid?' active':''}" onclick="setPaidStatus('${escHtml(s)}')">${isPaid?'★':'☆'}</button>
+      <button class="tag-remove" title="Fjern" onclick="removeStatus(${i})">✕</button>`;
+    statusesEl.appendChild(tag);
+  });
+}
+
+let _settingsSaveTimer = null;
+function applySettings() {
+  document.getElementById('app-title').textContent    = SETTINGS.title;
+  document.getElementById('app-subtitle').textContent = SETTINGS.subtitle;
+  document.title = SETTINGS.title;
+  const footer = document.getElementById('app-footer');
+  if (SETTINGS.footer.trim()) { footer.textContent = SETTINGS.footer; footer.classList.remove('hidden'); }
+  else { footer.classList.add('hidden'); }
+  const sym = (CURRENCIES[SETTINGS.currency] || CURRENCIES.NOK).symbol;
+  document.querySelectorAll('.currency-hint').forEach(el => el.textContent = '(' + sym + ')');
+  renderOwnerFilter();
+  render();
+  clearTimeout(_settingsSaveTimer);
+  _settingsSaveTimer = setTimeout(() => api('POST','settings', SETTINGS).catch(console.error), 600);
+}
+
+function addOwner() {
+  const inp = document.getElementById('cfg-owner-input');
+  const col = document.getElementById('cfg-owner-color');
+  const name = inp.value.trim();
+  if (!name || SETTINGS.owners.find(o=>o.name===name)) { inp.focus(); return; }
+  SETTINGS.owners.push({ name, color: col.value });
+  inp.value = '';
+  renderSettingsTags(); applySettings();
+}
+function removeOwner(i) {
+  if (SETTINGS.owners.length <= 1) return;
+  SETTINGS.owners.splice(i, 1);
+  if (!SETTINGS.owners.find(o=>o.name===currentOwner)) currentOwner='alle';
+  renderSettingsTags(); applySettings();
+}
+function addType() {
+  const inp = document.getElementById('cfg-type-input');
+  const val = inp.value.trim();
+  if (!val || SETTINGS.types.includes(val)) { inp.focus(); return; }
+  SETTINGS.types.push(val); inp.value = '';
+  renderSettingsTags(); applySettings();
+}
+function removeType(i) {
+  if (SETTINGS.types.length <= 1) return;
+  SETTINGS.types.splice(i, 1); renderSettingsTags(); applySettings();
+}
+function addStatus() {
+  const inp = document.getElementById('cfg-status-input');
+  const val = inp.value.trim();
+  if (!val || SETTINGS.statuses.includes(val)) { inp.focus(); return; }
+  SETTINGS.statuses.push(val); inp.value = '';
+  renderSettingsTags(); applySettings();
+}
+function removeStatus(i) {
+  if (SETTINGS.statuses.length <= 1) return;
+  if (SETTINGS.statuses[i] === SETTINGS.paidStatus)
+    SETTINGS.paidStatus = SETTINGS.statuses.find((_,j)=>j!==i) || '';
+  SETTINGS.statuses.splice(i, 1); renderSettingsTags(); applySettings();
+}
+function setPaidStatus(s) { SETTINGS.paidStatus = s; renderSettingsTags(); applySettings(); }
+
+// ── PIN save ──────────────────────────────────────────────────
+async function savePin() {
+  const inp = document.getElementById('cfg-pin');
+  const val = inp.value.trim();
+  const msg = document.getElementById('pin-save-msg');
+  if (!val || val.length < 4) {
+    msg.style.color = 'var(--red)'; msg.textContent = 'PIN må være minst 4 sifre.';
+    setTimeout(() => { msg.textContent = ''; }, 2500); return;
+  }
+  await api('POST', 'change_pin', { pin: val });
+  inp.value = '';
+  msg.style.color = 'var(--green)'; msg.textContent = '✓ PIN lagret.';
+  setTimeout(() => { msg.textContent = ''; }, 2500);
+}
+
+// ── Keyboard shortcuts ────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (document.getElementById('pin-overlay') && !document.getElementById('pin-overlay').classList.contains('hidden')) return;
+  if (e.key === 'Escape') {
+    closeSettings();
+    ['income-overlay','expense-overlay','newmonth-overlay','deletemonth-overlay'].forEach(closeModal);
+  }
+});
+</script>
+</body>
+</html>

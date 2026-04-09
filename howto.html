@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cashnarok™ – Installasjonsveiledning</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f0f4f8;
+    color: #2d3748;
+    line-height: 1.7;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  header {
+    background: linear-gradient(135deg, #2b6cb0 0%, #1a4a8a 100%);
+    color: #fff;
+    border-radius: 12px;
+    padding: 2rem 2.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 4px 20px rgba(43,108,176,.35);
+  }
+  header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: .3rem; }
+  header p  { opacity: .85; font-size: 1rem; }
+
+  .toc {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 1.4rem 1.8rem;
+    margin-bottom: 2.5rem;
+  }
+  .toc h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: .06em;
+             color: #718096; margin-bottom: .8rem; }
+  .toc ol  { padding-left: 1.2rem; }
+  .toc li  { margin: .3rem 0; }
+  .toc a   { color: #2b6cb0; text-decoration: none; font-weight: 500; }
+  .toc a:hover { text-decoration: underline; }
+
+  .step {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 1.8rem;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.6rem;
+    background: #ebf4ff;
+    border-bottom: 1px solid #bee3f8;
+  }
+  .step-num {
+    width: 36px; height: 36px;
+    background: #2b6cb0;
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .step-title { font-size: 1.1rem; font-weight: 700; color: #1a365d; }
+
+  .step-body { padding: 1.4rem 1.6rem; }
+  .step-body p  { margin-bottom: .8rem; }
+  .step-body ul, .step-body ol { padding-left: 1.4rem; margin-bottom: .8rem; }
+  .step-body li { margin: .4rem 0; }
+
+  code {
+    background: #edf2f7;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: .15em .45em;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: .88em;
+    color: #c53030;
+  }
+
+  pre {
+    background: #1a202c;
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 1.1rem 1.3rem;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: .9rem;
+    line-height: 1.6;
+    margin: .8rem 0 1rem;
+    position: relative;
+  }
+  pre code {
+    background: none; border: none; padding: 0;
+    color: inherit; font-size: inherit;
+  }
+  .comment { color: #68d391; }
+  .cmd     { color: #90cdf4; }
+
+  .tip {
+    background: #f0fff4;
+    border-left: 4px solid #38a169;
+    border-radius: 0 6px 6px 0;
+    padding: .9rem 1.1rem;
+    margin: 1rem 0;
+    font-size: .95rem;
+  }
+  .tip strong { color: #276749; }
+
+  .warn {
+    background: #fffbeb;
+    border-left: 4px solid #d69e2e;
+    border-radius: 0 6px 6px 0;
+    padding: .9rem 1.1rem;
+    margin: 1rem 0;
+    font-size: .95rem;
+  }
+  .warn strong { color: #7b5e0a; }
+
+  .optional-badge {
+    display: inline-block;
+    background: #9f7aea;
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    padding: .15em .55em;
+    border-radius: 999px;
+    vertical-align: middle;
+    margin-left: .4rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: .8rem 0 1rem;
+    font-size: .93rem;
+  }
+  th {
+    background: #edf2f7;
+    text-align: left;
+    padding: .55rem .85rem;
+    border: 1px solid #e2e8f0;
+    font-weight: 600;
+  }
+  td {
+    padding: .5rem .85rem;
+    border: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f7fafc; }
+
+  .url-box {
+    display: inline-block;
+    background: #ebf4ff;
+    border: 1px solid #bee3f8;
+    border-radius: 6px;
+    padding: .4rem .9rem;
+    font-family: monospace;
+    font-size: 1rem;
+    color: #2b6cb0;
+    font-weight: 600;
+    margin: .3rem 0;
+  }
+
+  footer {
+    text-align: center;
+    color: #a0aec0;
+    font-size: .85rem;
+    margin-top: 3rem;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <h1>📋 Cashnarok™ – Installasjonsveiledning</h1>
+  <p>Trinn-for-trinn guide for oppsett på Proxmox LXC (Debian 12)</p>
+</header>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <h2>Innhold</h2>
+  <ol>
+    <li><a href="#steg1">Opprett LXC-container i Proxmox</a></li>
+    <li><a href="#steg2">Kopier filer til containeren</a></li>
+    <li><a href="#steg3">Kjør installasjonsscriptet</a></li>
+    <li><a href="#steg4">Fullfør oppsett i nettleser</a></li>
+    <li><a href="#steg5">Ta appen i bruk</a></li>
+    <li><a href="#steg6">Tilpass malen (MAL)</a></li>
+    <li><a href="#steg7">Tilgang via Tailscale VPN <span class="optional-badge">Valgfritt</span></a></li>
+    <li><a href="#steg8">Vanlige spørsmål</a></li>
+    <li><a href="#steg9">Kjente feil og løsninger</a></li>
+  </ol>
+</div>
+
+<!-- STEP 1 -->
+<div class="step" id="steg1">
+  <div class="step-header">
+    <div class="step-num">1</div>
+    <div class="step-title">Opprett LXC-container i Proxmox</div>
+  </div>
+  <div class="step-body">
+    <p>Logg inn på Proxmox-grensesnittet ditt (vanligvis <code>https://proxmox-ip:8006</code>).</p>
+    <ol>
+      <li>Klikk <strong>Create CT</strong> (øverst til høyre).</li>
+      <li>Fyll inn disse verdiene:</li>
+    </ol>
+    <table>
+      <tr><th>Felt</th><th>Anbefalt verdi</th></tr>
+      <tr><td>Hostname</td><td><code>budsjett</code></td></tr>
+      <tr><td>Password</td><td>Velg et sterkt root-passord</td></tr>
+      <tr><td>Template</td><td><code>debian-12-standard</code> (last ned via Proxmox hvis ikke tilgjengelig)</td></tr>
+      <tr><td>Disk</td><td>8 GB (lokal lagring)</td></tr>
+      <tr><td>CPU</td><td>1 kjerne</td></tr>
+      <tr><td>RAM</td><td>256 MB</td></tr>
+      <tr><td>Swap</td><td>256 MB</td></tr>
+      <tr><td>Nettverk</td><td>DHCP (IPv4), bro: <code>vmbr0</code></td></tr>
+      <tr><td>DNS</td><td>La stå standard</td></tr>
+    </table>
+    <ol start="3">
+      <li>Klikk <strong>Finish</strong>, vent til containeren er opprettet.</li>
+      <li>Velg containeren i panelet til venstre → klikk <strong>Start</strong>.</li>
+      <li>Åpne <strong>Console</strong>-fanen og logg inn som <code>root</code>.</li>
+      <li>Finn IP-adressen (du trenger den i neste steg):</li>
+    </ol>
+    <pre><span class="cmd">ip addr show eth0</span>
+<span class="comment"># Se etter linjen som starter med "inet", f.eks.  inet 192.168.1.50/24</span></pre>
+    <div class="tip">
+      <strong>Tips:</strong> Sett en fast IP i ruteren din (DHCP-reservasjon basert på MAC-adresse)
+      så containeren alltid får samme adresse.
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step" id="steg2">
+  <div class="step-header">
+    <div class="step-num">2</div>
+    <div class="step-title">Kopier filer til containeren</div>
+  </div>
+  <div class="step-body">
+    <p>Du trenger disse filene fra <code>server/</code>-mappen (der du finner dette dokumentet):</p>
+    <ul>
+      <li><code>index.html</code></li>
+      <li><code>api.php</code></li>
+      <li><code>db.php</code></li>
+      <li><code>install.php</code></li>
+      <li><code>.htaccess</code></li>
+      <li><code>install.sh</code></li>
+      <li><code>howto.html</code> (denne filen)</li>
+    </ul>
+    <p>Erstatt <code>192.168.1.50</code> med din containers IP-adresse.</p>
+
+    <p><strong>Fra Windows (PowerShell eller CMD):</strong></p>
+    <pre><span class="comment"># Naviger til server/-mappen</span>
+<span class="cmd">cd C:\Users\janro\dev\regnskap-test\server</span>
+
+<span class="comment"># Kopier alle filene med SCP</span>
+<span class="cmd">scp index.html api.php db.php install.php .htaccess install.sh howto.html ^
+    root@192.168.1.50:/root/budsjett/</span></pre>
+
+    <div class="tip">
+      <strong>Alternativ – WinSCP:</strong> Last ned <a href="https://winscp.net" target="_blank">WinSCP</a>,
+      koble til med SFTP (port 22), og dra filene over med grafisk grensesnitt.
+    </div>
+    <div class="warn">
+      <strong>NB:</strong> Hvis du ikke har SSH aktivert i containeren, kjør dette i Proxmox-konsollen:<br>
+      <code>apt-get install -y openssh-server && systemctl enable --now ssh</code>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step" id="steg3">
+  <div class="step-header">
+    <div class="step-num">3</div>
+    <div class="step-title">Kjør installasjonsscriptet</div>
+  </div>
+  <div class="step-body">
+    <p>I Proxmox-konsollen (eller via SSH), kjør:</p>
+    <pre><span class="comment"># Gå inn i mappen der du kopierte filene</span>
+<span class="cmd">cd /root/budsjett</span>
+
+<span class="comment"># Gjør install.sh kjørbar</span>
+<span class="cmd">chmod +x install.sh</span>
+
+<span class="comment"># Kjør installasjonen (krever root)</span>
+<span class="cmd">bash install.sh</span></pre>
+
+    <p>Scriptet gjør automatisk:</p>
+    <ul>
+      <li>Installerer Apache, PHP og MariaDB</li>
+      <li>Oppretter database <code>budsjett</code> med tilfeldig generert passord</li>
+      <li>Skriver <code>db.php</code> med ekte databaselegitimasjon</li>
+      <li>Kopierer alle filer til <code>/var/www/html/</code></li>
+      <li>Konfigurerer Apache med <code>AllowOverride All</code> (for .htaccess)</li>
+      <li>Setter riktige filtillatelser</li>
+    </ul>
+
+    <p>Når scriptet er ferdig, viser det noe slikt:</p>
+    <pre><span class="comment">════════════════════════════════════════
+  Installasjon fullført!
+════════════════════════════════════════
+
+  Steg 1 – Kjør installer i nettleser:
+  http://192.168.1.50/install.php
+
+  Steg 2 – Åpne appen:
+  http://192.168.1.50/</span></pre>
+
+    <div class="tip">
+      <strong>Tips:</strong> Skriv ned IP-adressen som vises – du trenger den i neste steg.
+    </div>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step" id="steg4">
+  <div class="step-header">
+    <div class="step-num">4</div>
+    <div class="step-title">Fullfør oppsett i nettleser</div>
+  </div>
+  <div class="step-body">
+    <p>Åpne nettleseren din og gå til:</p>
+    <div class="url-box">http://192.168.1.50/install.php</div>
+    <p style="margin-top:.8rem;">Fyll inn dette skjemaet:</p>
+    <table>
+      <tr><th>Felt</th><th>Eksempel</th><th>Forklaring</th></tr>
+      <tr><td>Appnavn</td><td><code>Cashnarok™</code></td><td>Vises øverst i appen</td></tr>
+      <tr><td>Undertittel</td><td><code>Roger & Linda</code></td><td>Under appnavnet</td></tr>
+      <tr><td>Person 1</td><td><code>Roger</code> / blå</td><td>Eier 1 og favorittfarge</td></tr>
+      <tr><td>Person 2</td><td><code>Linda</code> / rosa</td><td>Eier 2 og favorittfarge</td></tr>
+      <tr><td>PIN</td><td><code>1234</code></td><td>Delt PIN for alle som bruker appen</td></tr>
+    </table>
+    <p>Klikk <strong>Installer</strong>. Installer-siden deaktiverer seg selv etter vellykket oppsett.</p>
+    <div class="tip">
+      <strong>Demo-data:</strong> Installasjonen legger inn en ferdig <strong>MAL</strong>-mal og en
+      demo-måned slik at du ser appen med ekte data med en gang.
+      Du kan slette demo-dataene og tilpasse malen etterpå (se steg 6).
+    </div>
+  </div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step" id="steg5">
+  <div class="step-header">
+    <div class="step-num">5</div>
+    <div class="step-title">Ta appen i bruk</div>
+  </div>
+  <div class="step-body">
+    <p>Appen er nå klar på:</p>
+    <div class="url-box">http://192.168.1.50/</div>
+    <p style="margin-top:.8rem;">Logg inn med PIN-koden du valgte i forrige steg.</p>
+
+    <p><strong>Legg til på hjemskjermen (mobil):</strong></p>
+    <ul>
+      <li><strong>iPhone/iPad:</strong> Åpne i Safari → Del-knapp → «Legg til på hjemskjermen»</li>
+      <li><strong>Android:</strong> Åpne i Chrome → meny (⋮) → «Legg til på startskjermen»</li>
+    </ul>
+    <p>Da fungerer appen nesten som en native app – uten adressefeltet.</p>
+
+    <p><strong>Raske tips:</strong></p>
+    <ul>
+      <li>Klikk på statusfargen (rød/grønn) på en utgiftsrad for å veksle mellom betalt/ikke betalt</li>
+      <li>Klikk på et beløp i «Faktisk»-kolonnen for å redigere det direkte i tabellen</li>
+      <li>Bruk <strong>+ Ny måned</strong>-knappen for å opprette en ny måned basert på malen</li>
+      <li>Måneden kopierer budsjetttall fra MAL, men nullstiller betalingsstatus og faktiske beløp</li>
+    </ul>
+  </div>
+</div>
+
+<!-- STEP 6 -->
+<div class="step" id="steg6">
+  <div class="step-header">
+    <div class="step-num">6</div>
+    <div class="step-title">Tilpass malen (MAL)</div>
+  </div>
+  <div class="step-body">
+    <p>
+      <strong>MAL</strong>-arket er malen som kopieres når du lager en ny måned.
+      Her legger du inn alle faste og typiske utgifter for husstanden din.
+    </p>
+    <ol>
+      <li>Klikk på <strong>MAL</strong> i måneds-navigasjonen øverst.</li>
+      <li>Slett demo-utgifter du ikke trenger (søppelkasse-ikon).</li>
+      <li>Rediger eksisterende rader (blyant-ikon) – endre navn og budsjettbeløp.</li>
+      <li>Legg til nye rader med <strong>+ Legg til inntekt</strong> eller <strong>+ Legg til utgift</strong>.</li>
+      <li>Sett riktig type: <em>Fast</em> (husleie), <em>Variabel</em> (mat), <em>Stipulert</em> (strøm), <em>Midlertidig</em> (engangskostnader).</li>
+      <li>Tildel eier (Person 1 / Person 2 / Felles) på hver utgift.</li>
+    </ol>
+
+    <p><strong>Innstillinger og etiketter tilpasses via tannhjulet ⚙ øverst til høyre:</strong></p>
+    <ul>
+      <li>Endre appnavn og undertittel</li>
+      <li>Legg til / endre eiere og farger</li>
+      <li>Tilpass statusetiketter (f.eks. «Venter» i stedet for «Ikke betalt»)</li>
+      <li>Endre PIN</li>
+      <li>Velg norsk eller engelsk grensesnitt</li>
+    </ul>
+  </div>
+</div>
+
+<!-- STEP 7 -->
+<div class="step" id="steg7">
+  <div class="step-header">
+    <div class="step-num">7</div>
+    <div class="step-title">Tilgang via Tailscale VPN <span class="optional-badge">Valgfritt</span></div>
+  </div>
+  <div class="step-body">
+    <p>
+      Med Tailscale kan du og Linda nå appen sikkert fra internett – uten å åpne porter i ruteren.
+      Tailscale er gratis for privatbruk (opp til 3 brukere).
+    </p>
+
+    <p><strong>Installer Tailscale i containeren:</strong></p>
+    <pre><span class="cmd">curl -fsSL https://tailscale.com/install.sh | sh</span>
+<span class="cmd">tailscale up</span>
+<span class="comment"># Følg lenken som vises for å logge inn med Google/GitHub/Microsoft</span></pre>
+
+    <p><strong>Finn Tailscale-IP-en til containeren:</strong></p>
+    <pre><span class="cmd">tailscale ip -4</span>
+<span class="comment"># Viser noe som: 100.x.x.x</span></pre>
+
+    <p><strong>Installer Tailscale på telefonen/PC-en din:</strong></p>
+    <ul>
+      <li>Last ned <a href="https://tailscale.com/download" target="_blank">tailscale.com/download</a></li>
+      <li>Logg inn med samme konto som i containeren</li>
+      <li>Nå kan du åpne appen via: <code>http://100.x.x.x/</code></li>
+    </ul>
+
+    <div class="tip">
+      <strong>Fordel:</strong> Tailscale-trafikken er kryptert (WireGuard), så appen er trygg selv uten HTTPS.
+      Ingen router-konfigurasjon trengs.
+    </div>
+    <div class="warn">
+      <strong>NB:</strong> Husk å legge til alle enheter (Roger sin telefon + Linda sin telefon) i samme
+      Tailscale-konto, eller aktiver «MagicDNS» og «Share» i Tailscale-dashbordet.
+    </div>
+  </div>
+</div>
+
+<!-- STEP 8 -->
+<div class="step" id="steg8">
+  <div class="step-header">
+    <div class="step-num">8</div>
+    <div class="step-title">Vanlige spørsmål</div>
+  </div>
+  <div class="step-body">
+
+    <p><strong>Jeg får «403 Forbidden» eller blank side</strong></p>
+    <p>Sjekk at Apache har <code>AllowOverride All</code> og at <code>mod_rewrite</code> er aktivert:</p>
+    <pre><span class="cmd">a2enmod rewrite && systemctl restart apache2</span></pre>
+
+    <p><strong>Jeg kan ikke logge inn med PIN</strong></p>
+    <p>Tilbakestill PIN direkte i databasen:</p>
+    <pre><span class="cmd">mysql -u root budsjett -e "UPDATE settings SET \`value\`='1234' WHERE \`key\`='pin';"</span></pre>
+    <p>Verifiser at PIN er lagret riktig (ingen skjulte tegn):</p>
+    <pre><span class="cmd">mysql -u root budsjett -e "SELECT HEX(\`value\`) FROM settings WHERE \`key\`='pin';"</span>
+<span class="comment"># Forventet output for PIN 1234:  31323334</span></pre>
+
+    <p><strong>Jeg vil oppdatere appen til en ny versjon</strong></p>
+    <p>Kopier de nye filene med SCP fra Windows, og deretter til webroot:</p>
+    <pre><span class="cmd">cp /root/budsjett/index.html /var/www/html/index.html
+cp /root/budsjett/api.php   /var/www/html/api.php
+chown www-data:www-data /var/www/html/index.html /var/www/html/api.php</span></pre>
+    <p><em>db.php og install.php skal IKKE overskrives – de inneholder databasepassordet og installasjonstilstand.</em></p>
+
+    <p><strong>Jeg vil ta sikkerhetskopi av databasen</strong></p>
+    <pre><span class="cmd">mysqldump -u root budsjett > /root/budsjett_backup_$(date +%Y%m%d).sql</span></pre>
+
+    <p><strong>Jeg vil gjenopprette en sikkerhetskopi</strong></p>
+    <pre><span class="cmd">mysql -u root budsjett < /root/budsjett_backup_20260101.sql</span></pre>
+
+    <p><strong>Proxmox-containeren viser ikke Debian 12 i malen</strong></p>
+    <p>Last ned malen: Proxmox → node → local → CT Templates → klikk <strong>Templates</strong> og søk etter <code>debian-12</code>.</p>
+
+    <p><strong>Kan jeg bruke HTTPS?</strong></p>
+    <p>
+      Ja, men det krever et domenenavn og et SSL-sertifikat. Det enkleste er å bruke Tailscale (steg 7)
+      som allerede krypterer trafikken, eller sette opp en Nginx reverse proxy med Let's Encrypt.
+      For hjemmebruk med VPN er HTTP + Tailscale mer enn godt nok.
+    </p>
+  </div>
+</div>
+
+<!-- STEP 9 – Kjente feil og løsninger -->
+<div class="step" id="steg9">
+  <div class="step-header">
+    <div class="step-num">9</div>
+    <div class="step-title">Kjente feil og løsninger</div>
+  </div>
+  <div class="step-body">
+    <p>
+      Disse feilene ble avdekket under første installasjon og er rettet i kildekoden.
+      Hvis du installerer fra oppdaterte filer vil du ikke oppleve dem.
+      Dersom du allikevel støter på dem (f.eks. ved reinstallasjon fra eldre filer), finner du løsningene her.
+    </p>
+
+    <hr style="border:none;border-top:1px solid #e2e8f0;margin:1.2rem 0">
+
+    <p><strong>🔴 Feil 1 — install.php returnerer HTTP 500</strong></p>
+    <p><em>Symptom:</em> Nettleseren viser «500 Internal Server Error» når du åpner <code>install.php</code>.</p>
+    <p><em>Årsak:</em> Apache-loggen viser:</p>
+    <pre><span class="comment">PHP Parse error: syntax error, unexpected token ","
+  in /var/www/html/install.php on line 99</span></pre>
+    <p><em>Forklaring:</em> En eldre versjon av filen brukte <code>[$, $name, $budgeted]</code> som er ugyldig PHP-syntaks. PHP støtter ikke <code>$</code> alene som plassholder i array-destrukturering.</p>
+    <p><em>Løsning:</em> Kontroller linje 99 i <code>/var/www/html/install.php</code>:</p>
+    <pre><span class="comment"># Sjekk linje 99</span>
+<span class="cmd">sed -n '98,101p' /var/www/html/install.php</span></pre>
+    <p>Den skal se slik ut (tom plass som første element, <strong>ikke</strong> <code>$</code>):</p>
+    <pre><span class="comment">foreach ($malIncome as $i => [, $name, $budgeted]) {</span></pre>
+    <p>Hvis ikke, kopier den oppdaterte <code>install.php</code> fra kildekatalogen:</p>
+    <pre><span class="cmd">cp /root/budsjett/install.php /var/www/html/install.php</span></pre>
+
+    <hr style="border:none;border-top:1px solid #e2e8f0;margin:1.2rem 0">
+
+    <p><strong>🔴 Feil 2 — install.php oppretter ikke alle tabeller</strong></p>
+    <p><em>Symptom:</em> Installasjonen ser ut til å gå gjennom, men appen feiler fordi tabeller mangler i databasen.</p>
+    <p><em>Årsak:</em> En eldre versjon kjørte alle fire <code>CREATE TABLE</code>-setninger i ett enkelt <code>PDO::exec()</code>-kall. PDO med MySQL støtter ikke flere setninger i én exec()-operasjon — bare den første setningen kjøres.</p>
+    <p><em>Løsning:</em> Sjekk at tabellene finnes:</p>
+    <pre><span class="cmd">mysql -u root budsjett -e "SHOW TABLES;"</span>
+<span class="comment"># Forventet output:
+# settings
+# sheets
+# income
+# expenses</span></pre>
+    <p>Mangler tabeller, oppdater <code>install.php</code> og reinstaller:</p>
+    <pre><span class="cmd">cp /root/budsjett/install.php /var/www/html/install.php</span>
+<span class="comment"># Deretter åpne http://IP/install.php i nettleseren på nytt</span></pre>
+
+    <hr style="border:none;border-top:1px solid #e2e8f0;margin:1.2rem 0">
+
+    <p><strong>🔴 Feil 3 — PIN-kode godtas aldri, selv om den er riktig</strong></p>
+    <p><em>Symptom:</em> Du taster PIN-koden, appen sier «Feil PIN-kode» uansett hva du skriver. API-et bekrefter at PIN er riktig når du tester med curl.</p>
+    <p><em>Diagnose:</em> Sjekk at API-kallet faktisk sender alle 4 sifrene:</p>
+    <pre><span class="cmd">curl -s -X POST "http://localhost/api.php?action=login" \
+  -H "Content-Type: application/json" \
+  -d '{"pin":"1234"}'</span>
+<span class="comment"># Skal returnere: {"ok":true}</span></pre>
+    <p>Sjekk også PIN i databasen:</p>
+    <pre><span class="cmd">mysql -u root budsjett -e "SELECT HEX(\`value\`) FROM settings WHERE \`key\`='pin';"</span>
+<span class="comment"># 1234 = 31323334</span></pre>
+    <p><em>Årsak:</em> En eldre versjon av <code>index.html</code> startet innsendingstimeren etter <em>hvert enkelt tastetrykk</em> (150 ms timeout), ikke bare når 4+ sifre var tastet. Det medførte at f.eks. «1» ble sendt alene og feilet, og PIN-bufferen ble nullstilt.</p>
+    <p><em>Løsning:</em> Verifiser at den riktige versjonen av <code>index.html</code> er i bruk:</p>
+    <pre><span class="cmd">grep -n "pinBuffer.length >= 4" /var/www/html/index.html</span>
+<span class="comment"># Skal vise minst 2 treff (én i pinPress, én i pinKeyHandler)</span></pre>
+    <p>Ingen treff? Kopier den oppdaterte filen:</p>
+    <pre><span class="cmd">cp /root/budsjett/index.html /var/www/html/index.html</span></pre>
+    <p>Husk å tømme nettlesercachen etterpå (<code>Ctrl+Shift+R</code> eller åpne i inkognitomodus).</p>
+
+    <hr style="border:none;border-top:1px solid #e2e8f0;margin:1.2rem 0">
+
+    <p><strong>⚠️ Generell regel: alltid SCP før install.sh</strong></p>
+    <div class="warn">
+      <strong>Viktig:</strong> Filene i <code>/root/budsjett/</code> på serveren er kun så oppdaterte som sist du kopierte dem fra Windows.
+      <code>install.sh</code> kopierer derfra til <code>/var/www/html/</code> — men hvis kildefilene er utdaterte, er webfilene det også.<br><br>
+      Kjør alltid SCP fra Windows <strong>før</strong> du kjører <code>install.sh</code>:
+    </div>
+    <pre><span class="comment"># Fra Windows PowerShell – erstatt IP med din container-IP</span>
+<span class="cmd">scp index.html api.php db.php install.php .htaccess install.sh howto.html ^
+    root@192.168.1.50:/root/budsjett/</span></pre>
+  </div>
+</div>
+
+<footer>
+  <p>Cashnarok™ © 2026 Roger Johannesen – Utviklet for personlig bruk</p>
+</footer>
+
+</div>
+</body>
+</html>
