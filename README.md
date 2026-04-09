@@ -7,6 +7,23 @@ A lightweight, privacy-first household budget web application built for self-hos
 No subscriptions. No cloud. No tracking. Odin approved.
 
 ---
+![Dashboard screenshot](screenshots/cashnarok1.png)
+Simple pincode access level for internal hosting.
+
+![Dashboard screenshot](screenshots/cashnarok2.png)
+Advanced access level for public hosting.
+
+![Dashboard screenshot](screenshots/cashnarok3.png)
+Default layout 1/2.
+
+![Dashboard screenshot](screenshots/cashnarok4.png)
+Default layout 2/2.
+
+![Dashboard screenshot](screenshots/cashnarok5.png)
+Dark mode activated.
+
+![Dashboard screenshot](screenshots/cashnarok6.png)
+Internal settings and customisation.
 
 ## Features
 
