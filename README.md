@@ -1,5 +1,5 @@
 # cashnarok
-Budget tracker from the halls of Valhalla. Track income &amp; expenses, juggle multiple users, log in via PIN or account. Runs LAMP (Debian 12 / Proxmox). Norwegian, English &amp; German UI. No cloud, no subscriptions. Highly customisable.
+Lightweight budget tracker from the halls of Valhalla. Track income &amp; expenses, juggle multiple users, log in via PIN or account. Runs LAMP (Debian 12 / Proxmox). Norwegian, English &amp; German UI. No cloud, no subscriptions. Highly customisable.
 *"Valhalla Certified™ – For Mortal Wallets"*
 
 A lightweight, privacy-first household budget web application built for self-hosting. Track income and expenses across months, manage multiple budget owners, and keep full control of your financial data on your own server.
